@@ -22,7 +22,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr th:each="client: ${client}">
+            <tr th:each="client: ${clients}">
                 <th th:text="${client.name}"></th>
                 <th th:text="${client.surname}"></th>
                 <th th:text="${client.dateOfBirth}"></th>
@@ -35,8 +35,3 @@
 
 </body>
 </html>
-private String name;
-private String surname;
-private Date dateOfBirth;
-private String email;
-private String password;

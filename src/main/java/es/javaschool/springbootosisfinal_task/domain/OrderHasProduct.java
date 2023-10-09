@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @Entity
+@Table(name = "order_has_product")
 public class OrderHasProduct {
 
     @Id

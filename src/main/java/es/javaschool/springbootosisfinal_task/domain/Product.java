@@ -12,10 +12,12 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @Entity
+@Table(name = "product")
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String title;
     private DecimalFormat price;
     private String category;

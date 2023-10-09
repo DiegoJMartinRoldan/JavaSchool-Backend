@@ -11,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @Entity
+@Table(name = "clients_address")
 public class ClientsAddress {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

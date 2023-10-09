@@ -16,8 +16,8 @@ public class ClientController {
 
     @GetMapping("/list")
     private String listClients (Model model){
-        model.addAttribute("clients", clientService.listclient());
-        return "client";
+        model.addAttribute("client", clientService.listclient());
+        return "client/client";
 
 
     }
