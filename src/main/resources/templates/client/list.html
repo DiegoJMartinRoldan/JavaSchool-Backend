@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Clients List</title>
+
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+    <link th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.css}" rel="stylesheet">
+    <script th:src="@{/webjars/bootstrap/5.2.3/js/bootstrap.min.js}"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <h2>Clients</h2>
+        </div>
+        <table class="table">
+            <thead class="table-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Surname</th>
+                    <th>Date Of Birth</th>
+                    <th>Email</th>
+                    <!--     <th>Password</th>  maybe i will use it in the future -->
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="client : ${clients}">
+                    <td th:text="${client.name}"></td>
+                    <td th:text="${client.surname}"></td>
+                    <td th:text="${client.dateOfBirth}"></td>
+                    <td th:text="${client.email}"></td>
+
+                    <td>
+                        <a th:href="@{/client/update/{id}(id=${client.id})}" class="btn btn-primary">Update</a>
+                        <a th:href="@{/client/delete/{id}(id=${client.id})}" class="btn btn-danger">Delete</a>
+                    </td>
+
+                </tr>
+                <a th:href="@{/client/create}" class="btn btn-primary">Create Client</a>
+
+
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

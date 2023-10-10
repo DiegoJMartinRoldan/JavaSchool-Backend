@@ -22,7 +22,9 @@ public class Client {
     //Using .identity because the id can be autoincremental and there are no specific uses
     private Long id;
 
+  //  @Column(name ="name" )
     private String name;
+   // @Column(name ="name" )
     private String surname;
     private Date dateOfBirth;
     private String email;

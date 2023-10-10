@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Clients List</title>
+
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+    <link th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.css}" rel="stylesheet">
+    <script th:src="@{/webjars/bootstrap/5.2.3/js/bootstrap.min.js}"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <h2>Clients</h2>
+        </div>
+        <form th:object="${clientUpdate}" th:action="@{/client/update}" method="post">
+
+            <input type="hidden" th:field="*{id}" />
+
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required><br>
+
+            <label for="surname">Surname:</label>
+            <input type="text" id="surname" name="surname" required><br>
+
+         <!--   <label for="dateOfBirth">Date of Birth:</label>
+            <input type="date" id="dateOfBirth" name="dateOfBirth" required><br>
+            -->
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required><br>
+
+          <!--  <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required><br>
+            -->
+
+            <button type="submit">Update</button>
+        </form>
+    </div>
+</body>
+</html>
