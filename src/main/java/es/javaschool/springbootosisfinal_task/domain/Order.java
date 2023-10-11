@@ -17,21 +17,34 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "paymentMethod")
     private String paymentMethod;
+
+
+    @Column(name = "deliveryMethod")
     private String deliveryMethod;
+
+
+    @Column(name = "paymentStatus")
     private String paymentStatus;
+
+
+    @Column(name = "orderStatus")
     private String orderStatus;
 
-     @ManyToOne
-     @JoinColumn(name = "client_id")
-     private Client client;
 
-     @ManyToOne
-     @JoinColumn(name = "clientsAddress_id")
-     private ClientsAddress clientsAddress;
+    @ManyToOne
+    @JoinColumn(name = "client_id")
+    private Client client;
 
-     @OneToMany(mappedBy = "order")
-     private List<OrderHasProduct> orderHasProducts;
+
+    @ManyToOne
+    @JoinColumn(name = "clients_address_id")
+    private ClientsAddress clientsAddress;
+
+
+    @OneToMany(mappedBy = "order")
+    private List<OrderHasProduct> orderHasProducts;
 
 
 

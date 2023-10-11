@@ -1,16 +1,23 @@
 package es.javaschool.springbootosisfinal_task.dto;
 
-import lombok.Data;
+import es.javaschool.springbootosisfinal_task.domain.Client;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ClientsAddresDTO {
 
+    private Long id;
     private String country;
     private String city;
     private String postalCode;
     private String street;
     private String home;
     private String apartment;
+
+
 
 
 }

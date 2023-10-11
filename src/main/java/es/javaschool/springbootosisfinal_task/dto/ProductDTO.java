@@ -1,12 +1,18 @@
 package es.javaschool.springbootosisfinal_task.dto;
 
-import lombok.Data;
+import lombok.*;
 
 import java.text.DecimalFormat;
 
-@Data
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProductDTO {
 
+
+    private Long id;
     private String title;
     private DecimalFormat price;
     private String category;

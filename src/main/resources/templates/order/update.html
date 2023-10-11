@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Order List</title>
+
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+    <link th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.css}" rel="stylesheet">
+    <script th:src="@{/webjars/bootstrap/5.2.3/js/bootstrap.min.js}"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <h2>Order</h2>
+        </div>
+        <form th:object="${orders}" th:action="@{/order/update}" method="post">
+
+            <input type="hidden" th:field="*{id}" />
+
+            <label for="paymentMethod">Payment Method:</label>
+            <input type="text" id="paymentMethod" name="paymentMethod" required><br>
+
+            <label for="deliveryMethod">Delivery Method:</label>
+            <input type="text" id="deliveryMethod" name="deliveryMethod" required><br>
+
+            <label for="paymentStatus">Payment Status:</label>
+            <input type="email" id="paymentStatus" name="paymentStatus" required><br>
+
+            <label for="orderStatus">Order Status:</label>
+            <input type="text" id="orderStatus" name="orderStatus" required><br>
+
+
+            <button type="submit">Update</button>
+        </form>
+    </div>
+</body>
+</html>

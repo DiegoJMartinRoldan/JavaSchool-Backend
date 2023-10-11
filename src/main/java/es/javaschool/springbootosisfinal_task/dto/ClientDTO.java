@@ -1,10 +1,13 @@
 package es.javaschool.springbootosisfinal_task.dto;
 
-import lombok.Data;
+import lombok.*;
 
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ClientDTO {
 
     private Long id;

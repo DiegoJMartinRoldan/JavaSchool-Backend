@@ -1,9 +1,10 @@
-package es.javaschool.springbootosisfinal_task.services;
-
+package es.javaschool.springbootosisfinal_task.services.clientServices;
 import es.javaschool.springbootosisfinal_task.domain.Client;
 import es.javaschool.springbootosisfinal_task.dto.ClientDTO;
 import es.javaschool.springbootosisfinal_task.repositories.ClientRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,11 +12,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class ClientService {
 
 
     @Autowired
     private ClientRepository clientRepository;
+
+    @Autowired
+    private final ClientMapper clientMapper;
 
 
 
@@ -23,13 +29,15 @@ public class ClientService {
         return  clientRepository
                 .findAll()
                 .stream()
-                .map(this::convertEntityToDto)
+                .map(clientMapper::convertEntityToDto)
                 .collect(Collectors.toList());
     }
 
 
     public void createClient(ClientDTO clientDTO) {
-        Client client = convertDtoToEntity(clientDTO);
+
+
+        Client client = clientMapper.convertDtoToEntity(clientDTO);
         clientRepository.save(client);
 
     }
@@ -41,11 +49,11 @@ public class ClientService {
 
     public void updateClient(ClientDTO clientDTO) {
         Client existing = getClientById(clientDTO.getId());
-        Client converted = convertDtoToEntity(clientDTO);
+        Client converted = clientMapper.convertDtoToEntity(clientDTO);
 
         existing.setName(converted.getName());
         existing.setSurname(converted.getSurname());
-      //  existing.setDateOfBirth(converted.getDateOfBirth());
+        existing.setDateOfBirth(converted.getDateOfBirth());
         existing.setEmail(converted.getEmail());
 
         clientRepository.save(existing);
@@ -56,27 +64,6 @@ public class ClientService {
         clientRepository.deleteById(id);
     }
 
-    //Conversion Methods
-    private ClientDTO convertEntityToDto(Client client){
-        ClientDTO clientDTO = new ClientDTO();
-        clientDTO.setName(client.getName());
-        clientDTO.setSurname(client.getSurname());
-        clientDTO.setDateOfBirth(client.getDateOfBirth());
-        clientDTO.setEmail(client.getEmail());
-
-        return  clientDTO;
-
-    }
-
-    private Client convertDtoToEntity(ClientDTO clientDTO){
-        Client client = new Client();
-        client.setName(clientDTO.getName());
-        client.setSurname(clientDTO.getSurname());
-        client.setDateOfBirth(clientDTO.getDateOfBirth());
-        client.setEmail(clientDTO.getEmail());
-
-        return client;
-    }
 
 
 

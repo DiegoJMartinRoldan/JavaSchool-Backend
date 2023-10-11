@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Clients List</title>
+
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+    <link th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.css}" rel="stylesheet">
+    <script th:src="@{/webjars/bootstrap/5.2.3/js/bootstrap.min.js}"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <h2>Clients</h2>
+        </div>
+        <form th:object="${clientsAddressCreate}" th:action="@{/clientAddress/create}" method="post">
+
+            <label for="country">Country:</label>
+            <input type="text" id="country" name="country" required><br>
+
+            <label for="city">City:</label>
+            <input type="text" id="city" name="city" required><br>
+
+            <label for="postalCode">Postal Code:</label>
+            <input type="email" id="postalCode" name="postalCode" required><br>
+
+            <label for="street">Street:</label>
+            <input type="email" id="street" name="street" required><br>
+
+            <label for="home">Home:</label>
+            <input type="email" id="home" name="home" required><br>
+
+            <label for="apartment">Apartment:</label>
+            <input type="email" id="apartment" name="apartment" required><br>
+
+
+            <button type="submit">Create</button>
+        </form>
+    </div>
+</body>
+</html>

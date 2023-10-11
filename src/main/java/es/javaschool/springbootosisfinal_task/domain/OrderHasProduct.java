@@ -14,17 +14,17 @@ public class OrderHasProduct {
 
     @Id
     private Long id;
+    private int quantity;
 
 
-   // @Id
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
 
-  //  @Id
+
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
 
-      private int quantity;
+
 }

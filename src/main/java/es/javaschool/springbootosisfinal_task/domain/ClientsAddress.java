@@ -17,11 +17,22 @@ public class ClientsAddress {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "country")
     private String country;
+
+    @Column(name = "city")
     private String city;
+
+    @Column(name = "postalCode")
     private String postalCode;
+
+    @Column(name = "street")
     private String street;
+
+    @Column(name = "home")
     private String home;
+
+    @Column(name = "apartment")
     private String apartment;
 
     @OneToMany(mappedBy = "clientsAddress", cascade = CascadeType.ALL)

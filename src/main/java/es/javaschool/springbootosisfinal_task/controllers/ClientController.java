@@ -1,9 +1,8 @@
 package es.javaschool.springbootosisfinal_task.controllers;
 import es.javaschool.springbootosisfinal_task.domain.Client;
 import es.javaschool.springbootosisfinal_task.dto.ClientDTO;
-import es.javaschool.springbootosisfinal_task.services.ClientService;
+import es.javaschool.springbootosisfinal_task.services.clientServices.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -59,32 +58,24 @@ public class ClientController {
   @GetMapping("/update/{id}")
   public String updatePage(@PathVariable Long id, Model model){
      Client client = clientService.getClientById(id);
-     model.addAttribute("clientUpdate", client);
+     model.addAttribute("clients", client);
      return "client/update";
 
     }
  @PostMapping("/update")
- public String Update(@ModelAttribute("clientUpdate") ClientDTO clientDTO) {
+ public String update(@ModelAttribute("clients") ClientDTO clientDTO) {
      clientService.updateClient(clientDTO);
      return "redirect:/client/list";
     }
 
     //Delete Clients
-    @PostMapping("/delete/{id}")
-    public String Delete(@PathVariable Long id){
+    @DeleteMapping("/delete/{id}")
+    public String delete(@PathVariable Long id){
      clientService.delete(id);
      return "redirect:/client/list";
     }
 
 
-
-
-
-
-
-
-
- //Update, Delete, Getbyid
 
 
 

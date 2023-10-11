@@ -26,8 +26,8 @@ public class Product {
     private DecimalFormat volume;
     private int quantityStock;
 
-    @OneToMany (mappedBy = "product")
-    private List<OrderHasProduct> orderHasProducts;
+   @OneToMany (mappedBy = "product")
+   private List<OrderHasProduct> orderHasProducts;
 
 
 }

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Clients Address</title>
+
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+    <link th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.css}" rel="stylesheet">
+    <script th:src="@{/webjars/bootstrap/5.2.3/js/bootstrap.min.js}"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <h2>Clients Address</h2>
+        </div>
+        <table class="table">
+            <thead class="table-dark">
+                <tr>
+                    <th>Id</th>
+                    <th>Country</th>
+                    <th>City</th>
+                    <th>Postal Code</th>
+                    <th>Street</th>
+                    <th>Home</th>
+                    <th>Apartment</th>
+
+
+                    <th>Features</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr th:each="client : ${clientsAddress}">
+                <td th:text="${client.id}"></td>
+                <td th:text="${client.country}"></td>
+                <td th:text="${client.city}"></td>
+                <td th:text="${client.postalCode}"></td>
+                <td th:text="${client.street}"></td>
+                <td th:text="${client.home}"></td>
+                <td th:text="${client.apartment}"></td>
+
+                <td>
+                    <a th:href="@{/clientsAddress/update/{id}(id=${client.id})}" class="btn btn-primary">Update</a>
+                    <a th:href="@{/clientsAddress/delete/{id}(id=${client.id})}" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+
+            <a th:href="@{/clientsAddress/create}" class="btn btn-primary">Create Client</a>
+
+
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

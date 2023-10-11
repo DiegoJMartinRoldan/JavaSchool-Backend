@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Product List</title>
+
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+    <link th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.css}" rel="stylesheet">
+    <script th:src="@{/webjars/bootstrap/5.2.3/js/bootstrap.min.js}"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <h2>Products</h2>
+        </div>
+        <table class="table">
+            <thead class="table-dark">
+                <tr>
+                    <th>Id</th>
+                    <th>Title</th>
+                    <th>Price</th>
+                    <th>Category</th>
+                    <th>Parameters</th>
+                    <th>Weight</th>
+                    <th>Volume</th>
+                    <th>Quantity Stock</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr th:each="productlist : ${products}">
+                <td th:text="${productlist.id}"></td>
+                <td th:text="${productlist.title}"></td>
+                <td th:text="${productlist.price}"></td>
+                <td th:text="${productlist.category}"></td>
+                <td th:text="${productlist.parameters}"></td>
+                <td th:text="${productlist.weight}"></td>
+                <td th:text="${productlist.volume}"></td>
+                <td th:text="${productlist.quantityStock}"></td>
+
+                <td>
+                    <a th:href="@{/product/update/{id}(id=${productlist.id})}" class="btn btn-primary">Update</a>
+                    <a th:href="@{/product/delete/{id}(id=${productlist.id})}" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+
+            <a th:href="@{/product/create}" class="btn btn-primary">Create Product</a>
+
+
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

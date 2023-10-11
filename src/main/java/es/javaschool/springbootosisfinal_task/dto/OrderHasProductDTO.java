@@ -1,9 +1,14 @@
 package es.javaschool.springbootosisfinal_task.dto;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderHasProductDTO {
 
+
+    private Long id;
     private int quantity;
 }

@@ -13,7 +13,7 @@
         <div class="row">
             <h2>Clients</h2>
         </div>
-        <form th:object="${clientUpdate}" th:action="@{/client/update}" method="post">
+        <form th:object="${clients}" th:action="@{/client/update}" method="post">
 
             <input type="hidden" th:field="*{id}" />
 

@@ -6,8 +6,6 @@ import lombok.*;
 import java.util.Date;
 import java.util.List;
 
-//@Data
-//@Data includes: @Getter, @Setter, @NoArgsConstructor, @AllArgsConstructor, @ToString
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,24 +17,28 @@ public class Client {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    //Using .identity because the id can be autoincremental and there are no specific uses
     private Long id;
 
-  //  @Column(name ="name" )
+    @Column(name = "name")
     private String name;
-   // @Column(name ="name" )
+
+    @Column(name = "surname")
     private String surname;
+
+    @Column(name = "dateOfBirth")
     private Date dateOfBirth;
+
+    @Column(name = "email")
     private String email;
+
+    @Column(name = "password")
     private String password;
 
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
-    private List<Order> orders;
+
+   @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+   private List<Order> orders;
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
     private List<ClientsAddress> clientsAddresses;
-
-
-
 
 }
