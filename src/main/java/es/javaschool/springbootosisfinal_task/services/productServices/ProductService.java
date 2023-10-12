@@ -1,7 +1,5 @@
 package es.javaschool.springbootosisfinal_task.services.productServices;
-import es.javaschool.springbootosisfinal_task.domain.Client;
 import es.javaschool.springbootosisfinal_task.domain.Product;
-import es.javaschool.springbootosisfinal_task.dto.ClientDTO;
 import es.javaschool.springbootosisfinal_task.dto.ProductDTO;
 import es.javaschool.springbootosisfinal_task.repositories.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -50,7 +48,9 @@ private ProductMapper productMapper;
         Product existing = getProductById(productDTO.getId());
         Product converted = productMapper.convertDtoToEntity(productDTO);
 
-        existing.setTitle(converted.getTitle());
+
+        existing.setId(converted.getId());
+        existing.setTitle(productDTO.getTitle());
         existing.setPrice(converted.getPrice());
         existing.setCategory(converted.getCategory());
         existing.setParameters(converted.getParameters());

@@ -2,6 +2,7 @@ package es.javaschool.springbootosisfinal_task.dto;
 
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 
@@ -14,10 +15,10 @@ public class ProductDTO {
 
     private Long id;
     private String title;
-    private DecimalFormat price;
+    private BigDecimal price;
     private String category;
     private String parameters;
-    private DecimalFormat weight;
-    private DecimalFormat volume;
+    private BigDecimal weight;
+    private BigDecimal volume;
     private int quantityStock;
 }

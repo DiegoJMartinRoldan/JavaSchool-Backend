@@ -57,12 +57,12 @@ public class ClientsAddressController {
         return "clientsAddress/update";
     }
 
-    @PostMapping("/update")
-    public String updateClientAddress(@ModelAttribute("clientsAddress") ClientsAddresDTO clientsAddresDTO) {
-        clientAddressService.updateClientAddress(clientsAddresDTO);
-        return "redirect:/clientsAddress/list";
+      @PostMapping("/update")
+      public String updateClientAddress(@ModelAttribute("clientsAddress") ClientsAddresDTO clientsAddresDTO) {
+          clientAddressService.updateClientAddress(clientsAddresDTO);
+          return "redirect:/clientsAddress/list";
 
-    }
+      }
 
     @DeleteMapping("/delete{id}")
     public RedirectView delete(@PathVariable Long id) {

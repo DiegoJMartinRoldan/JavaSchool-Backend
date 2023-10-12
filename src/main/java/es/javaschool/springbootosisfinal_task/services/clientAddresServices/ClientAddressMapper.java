@@ -38,7 +38,7 @@ public class ClientAddressMapper {
 
     }
 
-    public ClientsAddress convertDtoToEntity(ClientsAddresDTO clientsAddresDTO){
+    public ClientsAddress convertDtoToEntity(ClientsAddresDTO clientsAddresDTO) {
 
         ClientsAddress clientsAddress = new ClientsAddress();
 
@@ -51,9 +51,9 @@ public class ClientAddressMapper {
         clientsAddress.setApartment(clientsAddresDTO.getApartment());
 
 
-      //  Client client = clientRepository.findById(clientsAddresDTO.getClient().getId())
-      //          .orElseThrow(() -> new RuntimeException("Client not found"));
-      //  clientsAddress.setClient(client);
+        //  Client client = clientRepository.findById(clientsAddresDTO.getClient().getId())
+        //          .orElseThrow(() -> new RuntimeException("Client not found"));
+        //  clientsAddress.setClient(client);
 
 
         return clientsAddress;

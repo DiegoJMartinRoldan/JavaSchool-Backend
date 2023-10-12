@@ -11,7 +11,6 @@ import java.text.DecimalFormat;
 public class ProductMapper {
 
     public ProductDTO convertEntityToDto(Product product){
-
         ProductDTO productDTO = new ProductDTO();
 
         productDTO.setId(product.getId());
@@ -22,6 +21,7 @@ public class ProductMapper {
         productDTO.setWeight(product.getWeight());
         productDTO.setVolume(product.getVolume());
         productDTO.setQuantityStock(product.getQuantityStock());
+
         return productDTO;
 
     }

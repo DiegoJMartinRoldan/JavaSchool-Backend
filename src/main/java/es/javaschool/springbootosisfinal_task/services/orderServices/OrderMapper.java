@@ -12,23 +12,15 @@ import org.springframework.stereotype.Service;
 public class OrderMapper {
 
 
-    @Autowired
-    private final ClientService clientService;
-
-    @Autowired
-    private final ClientAddressService clientAddressService;
-
-
 
     public OrderDTO convertEntityToDto(Order order){
         OrderDTO orderDTO = new OrderDTO();
 
         orderDTO.setId(order.getId());
-        order.setPaymentMethod(order.getPaymentMethod());
-        order.setDeliveryMethod(order.getDeliveryMethod());
-        order.setPaymentStatus(order.getPaymentStatus());
-        order.setOrderStatus(order.getOrderStatus());
-
+        orderDTO.setPaymentMethod(order.getPaymentMethod());
+        orderDTO.setDeliveryMethod(order.getDeliveryMethod());
+        orderDTO.setPaymentStatus(order.getPaymentStatus());
+        orderDTO.setOrderStatus(order.getOrderStatus());
 
         return orderDTO;
 

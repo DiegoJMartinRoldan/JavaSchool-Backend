@@ -38,39 +38,36 @@ public class ClientAddressService {
 
     public void createClientAddress(ClientsAddresDTO clientsAddresDTO) {
 
-        Client client = clientRepository.findById(clientsAddresDTO.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Cliente no encontrado con ID: " + clientsAddresDTO.getId()));
-
-
         ClientsAddress clientsAddress = clientAddressMapper.convertDtoToEntity(clientsAddresDTO);
-        clientsAddress.setClient(client);
-
-
         clientsAddressRepository.save(clientsAddress);
 
     }
+
+
 
     public ClientsAddress getClientAddressById(Long id) {
         return clientsAddressRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Client not found with id: " + id));
     }
 
 
-    public void updateClientAddress(ClientsAddresDTO clientsAddresDTO) {
-        ClientsAddress existing = getClientAddressById(clientsAddresDTO.getId());
-        ClientsAddress converted = clientAddressMapper.convertDtoToEntity(clientsAddresDTO);
+   public void updateClientAddress(ClientsAddresDTO clientsAddresDTO) {
+       ClientsAddress existing = getClientAddressById(clientsAddresDTO.getId());
+       ClientsAddress converted = clientAddressMapper.convertDtoToEntity(clientsAddresDTO);
 
-        existing.setCountry(converted.getCountry());
-        existing.setCity(converted.getCity());
-        existing.setPostalCode(converted.getPostalCode());
-        existing.setStreet(converted.getStreet());
-        existing.setHome(converted.getHome());
-        existing.setApartment(converted.getApartment());
+       existing.setCountry(converted.getCountry());
+       existing.setCity(converted.getCity());
+       existing.setPostalCode(converted.getPostalCode());
+       existing.setStreet(converted.getStreet());
+       existing.setHome(converted.getHome());
+       existing.setApartment(converted.getApartment());
 
-        clientsAddressRepository.save(existing);
+       clientsAddressRepository.save(existing);
 
-    }
+   }
 
     public void delete(Long id) {
         clientsAddressRepository.deleteById(id);
     }
+
+
 }
