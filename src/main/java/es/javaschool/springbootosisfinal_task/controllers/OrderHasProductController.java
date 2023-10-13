@@ -1,6 +1,9 @@
 package es.javaschool.springbootosisfinal_task.controllers;
 import es.javaschool.springbootosisfinal_task.domain.OrderHasProduct;
+import es.javaschool.springbootosisfinal_task.domain.Orders;
+import es.javaschool.springbootosisfinal_task.domain.Product;
 import es.javaschool.springbootosisfinal_task.dto.OrderHasProductDTO;
+import es.javaschool.springbootosisfinal_task.repositories.OrderHasProductRepository;
 import es.javaschool.springbootosisfinal_task.services.orderHasProductServices.OrderHasProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
@@ -18,6 +21,10 @@ public class OrderHasProductController {
     @Autowired
     private OrderHasProductService orderHasProductService;
 
+    @Autowired
+    private OrderHasProductRepository orderHasProductRepository;
+
+
     @GetMapping ("/list")
     public String listAll(Model model){
         List<OrderHasProductDTO> orderHasProductDTOS = orderHasProductService.listAll();
@@ -29,6 +36,14 @@ public class OrderHasProductController {
     @GetMapping ("/create")
     public String createPage (Model model){
         OrderHasProductDTO orderHasProductDTO = new OrderHasProductDTO();
+        Orders orders = new Orders();
+        Product product = new Product();
+
+
+
+        orderHasProductDTO.setOrders(orders);
+        orderHasProductDTO.setProduct(product);
+
         model.addAttribute("orderHasProductsCreate", orderHasProductDTO);
         return "/orderHasProduct/create";
 

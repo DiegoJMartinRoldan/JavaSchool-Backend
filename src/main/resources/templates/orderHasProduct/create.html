@@ -13,14 +13,17 @@
         <div class="row">
             <h2>Order - Products</h2>
         </div>
-        <form th:object="${orderHasProducts}" th:action="@{/orderHasProduct/update}" method="post">
+        <form th:object="${orderHasProductsCreate}" th:action="@{/orderHasProduct/create}" method="post">
 
-            <input type="hidden" th:field="*{id}" />
+
+            <input type="hidden" th:field="*{orders.id}" />
+            <input type="hidden" th:field="*{product.id}" />
 
             <label for="quantity">Quantity:</label>
-            <input type="text" id="quantity" name="quantity" required><br>
+            <input type="text" id="quantity" th:field="*{quantity}" required>
+            <br>
 
-            <button type="submit">Update</button>
+            <button type="submit">create</button>
         </form>
     </div>
 </body>
