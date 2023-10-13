@@ -1,7 +1,10 @@
 package es.javaschool.springbootosisfinal_task.controllers;
+import es.javaschool.springbootosisfinal_task.domain.Client;
 import es.javaschool.springbootosisfinal_task.domain.ClientsAddress;
 import es.javaschool.springbootosisfinal_task.dto.ClientsAddresDTO;
+import es.javaschool.springbootosisfinal_task.repositories.ClientRepository;
 import es.javaschool.springbootosisfinal_task.services.clientAddresServices.ClientAddressService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,48 +20,84 @@ public class ClientsAddressController {
     @Autowired
     private ClientAddressService clientAddressService;
 
+    @Autowired
+    private ClientRepository clientRepository;
+
 
     //List of Clients Addresses
     @GetMapping("/list")
     public String listAll(Model model) {
         List<ClientsAddresDTO> clientsAddresDTOS = clientAddressService.listAll();
         model.addAttribute("clientsAddress", clientsAddresDTOS);
-        return "clientAddress/list";
+        return "clientsAddress/list";
 
 
     }
 
-
-    @GetMapping("/create")
-    public String createPage(Model model) {
+    @GetMapping("/create/{clientId}")
+    public String createPage(@PathVariable Long clientId, Model model) {
+        // Verifica si el cliente con el ID proporcionado existe
+        Client client = clientRepository.findById(clientId)
+                .orElseThrow(() -> new EntityNotFoundException("Client not found with id: " + clientId));
 
         ClientsAddresDTO clientsAddresDTO = new ClientsAddresDTO();
+        clientsAddresDTO.setClient(client); // Asigna el cliente al DTO
+        model.addAttribute("clientId", clientId);
         model.addAttribute("clientsAddress", clientsAddresDTO);
-        return "clientAddress/create";
+
+        return "clientsAddress/create";
     }
 
-    @PostMapping("/create")
-    public String createClientAddress(ClientsAddresDTO clientsAddresDTO) {
+    @PostMapping("/create/{clientId}")
+    public String createClientAddress(@PathVariable Long clientId, ClientsAddresDTO clientsAddresDTO) {
+        Client client = clientRepository.findById(clientId)
+                .orElseThrow(() -> new EntityNotFoundException("Client not found with id: " + clientId));
+        clientsAddresDTO.setClient(client);
+
         clientAddressService.createClientAddress(clientsAddresDTO);
-        return "redirect:/clientAddress/list";
+        return "redirect:/clientsAddress/list";
     }
+
+
+
+
+
+
+    // @GetMapping("/create")
+  // public String createPage(Model model) {
+
+  //     ClientsAddresDTO clientsAddresDTO = new ClientsAddresDTO();
+  //     model.addAttribute("clientsAddress", clientsAddresDTO);
+  //     return "clientsAddress/create";
+  // }
+
+  // @PostMapping("/create")
+  // public String createClientAddress(ClientsAddresDTO clientsAddresDTO) {
+  //     Long clientId = clientsAddresDTO.getClient().getId();
+  //     Client client = clientRepository
+  //             .findById(clientId)
+  //             .orElseThrow(() -> new EntityNotFoundException("Client not found with id: " + clientId));
+  //     clientsAddresDTO.setClient(client);
+  //     clientAddressService.createClientAddress(clientsAddresDTO);
+  //     return "redirect:/clientsAddress/list";
+  // }
 
     @GetMapping("/getby/{id}")
     public String getClientAddressById(@PathVariable Long id, Model model) {
         ClientsAddress clientsAddress = clientAddressService.getClientAddressById(id);
         model.addAttribute("clientsAddress", clientsAddress);
-        return "/clientAddress/getbyid";
+        return "/clientsAddress/getbyid";
     }
 
-    @GetMapping("/update{id}")
+    @GetMapping("/update/{id}")
     public String updatePage(@PathVariable Long id, Model model) {
         ClientsAddress clientsAddress = clientAddressService.getClientAddressById(id);
-        model.addAttribute("clientsAddress", clientsAddress);
+        model.addAttribute("clientsAddressUpdate", clientsAddress);
         return "clientsAddress/update";
     }
 
       @PostMapping("/update")
-      public String updateClientAddress(@ModelAttribute("clientsAddress") ClientsAddresDTO clientsAddresDTO) {
+      public String updateClientAddress(@ModelAttribute("clientsAddressUpdate") ClientsAddresDTO clientsAddresDTO) {
           clientAddressService.updateClientAddress(clientsAddresDTO);
           return "redirect:/clientsAddress/list";
 

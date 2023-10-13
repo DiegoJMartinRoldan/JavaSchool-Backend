@@ -3,7 +3,7 @@ package es.javaschool.springbootosisfinal_task.dto;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
+
 
 
 @Getter
@@ -20,5 +20,6 @@ public class ProductDTO {
     private String parameters;
     private BigDecimal weight;
     private BigDecimal volume;
-    private int quantityStock;
+    private Integer quantityStock;
+
 }

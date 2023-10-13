@@ -13,8 +13,13 @@
         <div class="row">
             <h2>Orders</h2>
         </div>
-        <form th:object="${orders}" th:action="@{/order/update}" method="post">
+        <form th:object="${orderCreate}" th:action="@{/orders/create}" method="post">
 
+            <label for="client.id">Client ID:</label>
+            <input type="text" id="client.id" name="client.id" required><br>
+
+            <label for="address.id">Address ID:</label>
+            <input type="text" id="address.id" name="address.id" required><br>
 
             <label for="paymentMethod">Payment Method:</label>
             <input type="text" id="paymentMethod" name="paymentMethod" required><br>
@@ -29,7 +34,7 @@
             <input type="text" id="orderStatus" name="orderStatus" required><br>
 
 
-            <button type="submit">Update</button>
+            <button type="submit">Create</button>
         </form>
     </div>
 </body>

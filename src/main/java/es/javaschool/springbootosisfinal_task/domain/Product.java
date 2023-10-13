@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.List;
 
 @Getter
@@ -43,8 +42,8 @@ public class Product {
     private BigDecimal volume;
 
 
-    @Column(name = "quantityStock")
-    private int quantityStock;
+    @Column(name = "quantity_stock")
+    private Integer quantityStock;
 
    @OneToMany (mappedBy = "product")
    private List<OrderHasProduct> orderHasProducts;

@@ -13,7 +13,7 @@
         <div class="row">
             <h2>Order</h2>
         </div>
-        <form th:object="${orders}" th:action="@{/order/update}" method="post">
+        <form th:object="${orders}" th:action="@{/orders/update}" method="post">
 
             <input type="hidden" th:field="*{id}" />
 
@@ -24,7 +24,7 @@
             <input type="text" id="deliveryMethod" name="deliveryMethod" required><br>
 
             <label for="paymentStatus">Payment Status:</label>
-            <input type="email" id="paymentStatus" name="paymentStatus" required><br>
+            <input type="text" id="paymentStatus" name="paymentStatus" required><br>
 
             <label for="orderStatus">Order Status:</label>
             <input type="text" id="orderStatus" name="orderStatus" required><br>

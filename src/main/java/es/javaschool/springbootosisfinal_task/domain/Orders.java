@@ -11,8 +11,8 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @Entity
-@Table(name = "order")
-public class Order {
+@Table(name = "orders")
+public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -43,7 +43,7 @@ public class Order {
     private ClientsAddress clientsAddress;
 
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "orders")
     private List<OrderHasProduct> orderHasProducts;
 
 

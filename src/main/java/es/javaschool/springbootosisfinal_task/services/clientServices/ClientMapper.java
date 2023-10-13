@@ -5,6 +5,8 @@ import es.javaschool.springbootosisfinal_task.dto.ClientDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
+
 @Service
 @RequiredArgsConstructor
 public class ClientMapper {
@@ -15,8 +17,7 @@ public class ClientMapper {
         clientDTO.setId(client.getId());
         clientDTO.setName(client.getName());
         clientDTO.setSurname(client.getSurname());
-
-        clientDTO.setDateOfBirth(client.getDateOfBirth());
+        clientDTO.setDateOfBirth((Date) client.getDateOfBirth());
         clientDTO.setEmail(client.getEmail());
 
         return  clientDTO;

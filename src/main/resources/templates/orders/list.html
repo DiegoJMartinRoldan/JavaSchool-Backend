@@ -25,24 +25,23 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="order : ${orders}">
-            <td th:text="${order.id}"></td>
-            <td th:text="${order.paymentMethod}"></td>
-            <td th:text="${order.deliveryMethod}"></td>
-            <td th:text="${order.paymentStatus}"></td>
-            <td th:text="${order.orderStatus}"></td>
-
-
+        <tr th:each="orders : ${orderslist}">
+            <td th:text="${orders.id}"></td>
+            <td th:text="${orders.paymentMethod}"></td>
+            <td th:text="${orders.deliveryMethod}"></td>
+            <td th:text="${orders.paymentStatus}"></td>
+            <td th:text="${orders.orderStatus}"></td>
             <td>
-                <a th:href="@{/order/update/{id}(id=${order.id})}" class="btn btn-primary">Update></a>
-                <a th:href="@{/order/delete/{id}(id=${order.id})}" class="btn btn-danger">Delete></a>
+                <a th:href="@{/orders/update/{id}(id=${orders.id})}" class="btn btn-primary">Update></a>
+                <a th:href="@{/orders/delete/{id}(id=${orders.id})}" class="btn btn-danger">Delete></a>
             </td>
         </tr>
 
-        <a th:href="@{/order/create}" class="btn btn-primary">Create Order</a>
+
 
         </tbody>
     </table>
+    <a th:href="@{/orders/create}" class="btn btn-primary">Create Order</a>
 </div>
 </body>
 </html>

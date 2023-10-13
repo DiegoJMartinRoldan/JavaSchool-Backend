@@ -36,7 +36,7 @@ public class ClientsAddress {
     private String apartment;
 
     @OneToMany(mappedBy = "clientsAddress", cascade = CascadeType.ALL)
-    private List<Order> orders;
+    private List<Orders> orders;
 
     @ManyToOne
     @JoinColumn(name = "client_id")

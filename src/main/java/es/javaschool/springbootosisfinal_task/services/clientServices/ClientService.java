@@ -35,8 +35,6 @@ public class ClientService {
 
 
     public void createClient(ClientDTO clientDTO) {
-
-
         Client client = clientMapper.convertDtoToEntity(clientDTO);
         clientRepository.save(client);
 

@@ -48,15 +48,14 @@ private ProductMapper productMapper;
         Product existing = getProductById(productDTO.getId());
         Product converted = productMapper.convertDtoToEntity(productDTO);
 
-
-        existing.setId(converted.getId());
-        existing.setTitle(productDTO.getTitle());
+        existing.setTitle(converted.getTitle());
         existing.setPrice(converted.getPrice());
         existing.setCategory(converted.getCategory());
         existing.setParameters(converted.getParameters());
         existing.setWeight(converted.getWeight());
         existing.setVolume(converted.getVolume());
         existing.setQuantityStock(converted.getQuantityStock());
+
 
         productRepository.save(existing);
 

@@ -16,6 +16,7 @@ public class ClientsAddresDTO {
     private String street;
     private String home;
     private String apartment;
+    private Client client;
 
 
 

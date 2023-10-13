@@ -31,7 +31,6 @@
                 <td th:text="${client.name}"></td>
                 <td th:text="${client.surname}"></td>
                 <td th:text="${#dates.format(client.dateOfBirth, 'yyyy-MM-dd')}"></td>
-
                 <td th:text="${client.email}"></td>
                 <td>
                     <a th:href="@{/client/update/{id}(id=${client.id})}" class="btn btn-primary">Update</a>
@@ -40,8 +39,8 @@
             </tr>
 
             <a th:href="@{/client/create}" class="btn btn-primary">Create Client</a>
-
-
+          <!--  <a th:href="@{/clientsAddress/create/{clientId}(clientId=${client.id})}" class="btn btn-dark" >Create Address</a>
+                -->
             </tbody>
         </table>
     </div>

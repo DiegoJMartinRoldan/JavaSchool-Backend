@@ -2,7 +2,7 @@ package es.javaschool.springbootosisfinal_task.dto;
 
 import lombok.*;
 
-import java.util.Date;
+import java.sql.Date;
 
 @Getter
 @Setter

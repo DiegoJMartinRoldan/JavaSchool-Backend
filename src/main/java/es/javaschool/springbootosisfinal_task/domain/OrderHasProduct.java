@@ -13,13 +13,17 @@ import lombok.*;
 public class OrderHasProduct {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+
+    @Column(name = "quantity")
     private int quantity;
 
 
     @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
+    @JoinColumn(name = "orders_id")
+    private Orders orders;
 
 
     @ManyToOne

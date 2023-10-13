@@ -111,6 +111,16 @@
 			<version>1.10.5</version>
 		</dependency>
 
+		<!-- Flyway -->
+
+		<!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-mysql -->
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-mysql</artifactId>
+			<version>9.22.2</version>
+		</dependency>
+
+
 
 
 

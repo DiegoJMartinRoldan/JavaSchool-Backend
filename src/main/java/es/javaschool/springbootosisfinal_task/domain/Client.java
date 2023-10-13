@@ -26,6 +26,7 @@ public class Client {
     private String surname;
 
     @Column(name = "dateOfBirth")
+    @Temporal(TemporalType.DATE)
     private Date dateOfBirth;
 
     @Column(name = "email")
@@ -36,7 +37,7 @@ public class Client {
 
 
    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
-   private List<Order> orders;
+   private List<Orders> orders;
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
     private List<ClientsAddress> clientsAddresses;

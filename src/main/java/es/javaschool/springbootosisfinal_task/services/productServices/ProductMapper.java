@@ -4,7 +4,6 @@ import es.javaschool.springbootosisfinal_task.dto.ProductDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.text.DecimalFormat;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +20,8 @@ public class ProductMapper {
         productDTO.setWeight(product.getWeight());
         productDTO.setVolume(product.getVolume());
         productDTO.setQuantityStock(product.getQuantityStock());
+
+
 
         return productDTO;
 
