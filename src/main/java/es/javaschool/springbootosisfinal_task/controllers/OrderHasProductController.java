@@ -4,7 +4,10 @@ import es.javaschool.springbootosisfinal_task.domain.Orders;
 import es.javaschool.springbootosisfinal_task.domain.Product;
 import es.javaschool.springbootosisfinal_task.dto.OrderHasProductDTO;
 import es.javaschool.springbootosisfinal_task.repositories.OrderHasProductRepository;
+import es.javaschool.springbootosisfinal_task.repositories.OrdersRepository;
+import es.javaschool.springbootosisfinal_task.repositories.ProductRepository;
 import es.javaschool.springbootosisfinal_task.services.orderHasProductServices.OrderHasProductService;
+import jakarta.persistence.criteria.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
@@ -22,7 +25,10 @@ public class OrderHasProductController {
     private OrderHasProductService orderHasProductService;
 
     @Autowired
-    private OrderHasProductRepository orderHasProductRepository;
+    private OrdersRepository ordersRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
 
 
     @GetMapping ("/list")
@@ -36,23 +42,25 @@ public class OrderHasProductController {
     @GetMapping ("/create")
     public String createPage (Model model){
         OrderHasProductDTO orderHasProductDTO = new OrderHasProductDTO();
-        Orders orders = new Orders();
-        Product product = new Product();
-
-
-
-        orderHasProductDTO.setOrders(orders);
-        orderHasProductDTO.setProduct(product);
-
         model.addAttribute("orderHasProductsCreate", orderHasProductDTO);
         return "/orderHasProduct/create";
 
     }
 
     @PostMapping("/create")
-    public String createOrderHasProduct (OrderHasProductDTO orderHasProductDTO){
-        orderHasProductService.createOrderHasProduct(orderHasProductDTO);
-        return "redirect:/orderHasProduct/list";
+    public String createOrderHasProduct (@ModelAttribute("orderHasProductsCreate") OrderHasProductDTO orderHasProductDTO, @RequestParam("orders.id") Long clientId, @RequestParam("product.id") Long productId){
+
+        Orders orders = ordersRepository.findById(clientId).orElse(null);
+        Product product = productRepository.findById(productId).orElse(null);
+
+        if (orders !=  null && product != null){
+            orderHasProductDTO.setOrders(orders);
+            orderHasProductDTO.setProduct(product);
+            orderHasProductService.createOrderHasProduct(orderHasProductDTO);
+            return "redirect:/orderHasProduct/list";
+        }else {
+            throw new RuntimeException("The product or the orders cannot be found");
+        }
 
     }
 
@@ -60,14 +68,14 @@ public class OrderHasProductController {
     public String getOrderHasProductById (@PathVariable Long id, Model model){
         OrderHasProduct orderHasProduct = orderHasProductService.getOrderHasProductById(id);
         model.addAttribute("orderHasProducts", orderHasProduct);
-        return "/orderHasProduct/getbyid";
+        return "orderHasProduct/getbyid";
     }
 
-    @GetMapping ("/update{id}")
+    @GetMapping ("/update/{id}")
     public String updatePage (@PathVariable Long id, Model model){
         OrderHasProduct orderHasProduct = orderHasProductService.getOrderHasProductById(id);
         model.addAttribute("orderHasProducts", orderHasProduct);
-        return "/orderHasProduct/update";
+        return "orderHasProduct/update";
 
 
     }
@@ -79,7 +87,7 @@ public class OrderHasProductController {
     }
 
 
-    @DeleteMapping ("/delete{id}")
+    @DeleteMapping ("/delete/{id}")
 
     public RedirectView delete (@PathVariable Long id){
         orderHasProductService.delete(id);

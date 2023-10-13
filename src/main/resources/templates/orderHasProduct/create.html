@@ -16,11 +16,14 @@
         <form th:object="${orderHasProductsCreate}" th:action="@{/orderHasProduct/create}" method="post">
 
 
-            <input type="hidden" th:field="*{orders.id}" />
-            <input type="hidden" th:field="*{product.id}" />
+            <label for="orders.id">Order ID:</label>
+            <input type="text" id="orders.id" name="orders.id" required><br>
+
+            <label for="product.id">Product ID:</label>
+            <input type="text" id="product.id" name="product.id" required><br>
 
             <label for="quantity">Quantity:</label>
-            <input type="text" id="quantity" th:field="*{quantity}" required>
+            <input type="text" id="quantity" name="quantity" required><br>
             <br>
 
             <button type="submit">create</button>

@@ -30,8 +30,8 @@ public class ClientAddressMapper {
        clientsAddresDTO.setStreet(clientsAddress.getStreet());
        clientsAddresDTO.setHome(clientsAddress.getHome());
        clientsAddresDTO.setApartment(clientsAddress.getApartment());
+       clientsAddresDTO.setClient(clientsAddress.getClient());
 
-      // clientsAddresDTO.setClient(clientsAddress.getClient());
 
        return clientsAddresDTO;
 
@@ -49,11 +49,7 @@ public class ClientAddressMapper {
         clientsAddress.setStreet(clientsAddresDTO.getStreet());
         clientsAddress.setHome(clientsAddresDTO.getHome());
         clientsAddress.setApartment(clientsAddresDTO.getApartment());
-
-
-        //  Client client = clientRepository.findById(clientsAddresDTO.getClient().getId())
-        //          .orElseThrow(() -> new RuntimeException("Client not found"));
-        //  clientsAddress.setClient(client);
+        clientsAddress.setClient(clientsAddresDTO.getClient());
 
 
         return clientsAddress;

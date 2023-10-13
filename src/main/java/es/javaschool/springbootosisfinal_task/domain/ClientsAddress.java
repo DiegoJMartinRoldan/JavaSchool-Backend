@@ -23,7 +23,7 @@ public class ClientsAddress {
     @Column(name = "city")
     private String city;
 
-    @Column(name = "postalCode")
+    @Column(name = "postal_code")
     private String postalCode;
 
     @Column(name = "street")

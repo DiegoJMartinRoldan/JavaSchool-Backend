@@ -15,7 +15,7 @@ public class OrderHasProductMapper {
         orderHasProductDTO.setId(orderHasProduct.getId());
         orderHasProductDTO.setQuantity(orderHasProduct.getQuantity());
         orderHasProductDTO.setOrders(orderHasProduct.getOrders());
-        orderHasProduct.setProduct(orderHasProduct.getProduct());
+        orderHasProductDTO.setProduct(orderHasProduct.getProduct());
 
         return  orderHasProductDTO;
 

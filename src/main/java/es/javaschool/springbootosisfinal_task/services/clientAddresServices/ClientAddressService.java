@@ -25,8 +25,6 @@ public class ClientAddressService {
     @Autowired
     private ClientAddressMapper clientAddressMapper;
 
-    @Autowired
-    private ClientRepository clientRepository;
 
     public List<ClientsAddresDTO> listAll() {
         return  clientsAddressRepository

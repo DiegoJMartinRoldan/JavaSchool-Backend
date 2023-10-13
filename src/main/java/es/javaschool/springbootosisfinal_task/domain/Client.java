@@ -25,7 +25,7 @@ public class Client {
     @Column(name = "surname")
     private String surname;
 
-    @Column(name = "dateOfBirth")
+    @Column(name = "date_of_birth")
     @Temporal(TemporalType.DATE)
     private Date dateOfBirth;
 

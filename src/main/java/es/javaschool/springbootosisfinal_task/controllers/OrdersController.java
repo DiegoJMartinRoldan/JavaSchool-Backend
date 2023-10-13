@@ -30,8 +30,6 @@ public class OrdersController {
     private ClientsAddressRepository clientsAddressRepository;
 
 
-    @Autowired
-    private OrdersMapper ordersMapper;
 
     //List
     @GetMapping("/list")
@@ -63,7 +61,7 @@ public class OrdersController {
             ordersService.createOrder(ordersDTO);
             return "redirect:/orders/list";
         } else {
-            throw new RuntimeException("El cliente o la dirección de clientes no se encontraron. Verifique los valores proporcionados.");
+            throw new RuntimeException("The client or the client's address was not found. Please check the provided values.");
         }
     }
 

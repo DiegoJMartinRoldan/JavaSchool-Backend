@@ -17,19 +17,19 @@ public class Orders {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "paymentMethod")
+    @Column(name = "payment_method")
     private String paymentMethod;
 
 
-    @Column(name = "deliveryMethod")
+    @Column(name = "delivery_method")
     private String deliveryMethod;
 
 
-    @Column(name = "paymentStatus")
+    @Column(name = "payment_status")
     private String paymentStatus;
 
 
-    @Column(name = "orderStatus")
+    @Column(name = "order_status")
     private String orderStatus;
 
 

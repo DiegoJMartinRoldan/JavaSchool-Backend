@@ -14,9 +14,10 @@
             <h2>Create Client Address</h2>
         </div>
 
-        <form th:object="${clientsAddress}" th:action="@{'/clientsAddress/create/' + clientId}" method="post">
+        <form th:object="${clientsAddress}" th:action="@{/clientsAddress/create}" method="post">
 
-            <input type="hidden" th:field="*{client.id}" />
+            <label for="client.id">Client ID:</label>
+            <input type="text" id="client.id" name="client.id" required><br>
 
             <label for="country">Country:</label>
             <input type="text" id="country" name="country" required><br>

@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS `javaschool`.`client` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL,
   `surname` VARCHAR(45) NULL,
-  `dateOfBirth` DATE NULL,
+  `date_of_birth` DATE NULL,
   `email` VARCHAR(45) NULL,
   `password` VARCHAR(45) NULL,
   PRIMARY KEY (`id`)
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `javaschool`.`clients_address` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `country` VARCHAR(45) NULL,
   `city` VARCHAR(45) NULL,
-  `postalCode` VARCHAR(45) NULL,
+  `postal_code` VARCHAR(45) NULL,
   `street` VARCHAR(45) NULL,
   `home` VARCHAR(45) NULL,
   `apartment` VARCHAR(45) NULL,
@@ -51,22 +51,22 @@ DEFAULT CHARACTER SET = utf8mb4;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `javaschool`.`orders` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `paymentMethod` VARCHAR(45) NULL,
-  `deliveryMethod` VARCHAR(45) NULL,
-  `paymentStatus` VARCHAR(45) NULL,
-  `orderStatus` VARCHAR(45) NULL,
+  `payment_method` VARCHAR(45) NULL,
+  `delivery_method` VARCHAR(45) NULL,
+  `payment_status` VARCHAR(45) NULL,
+  `order_status` VARCHAR(45) NULL,
   `client_id` INT NOT NULL,
-  `client_address_id` INT NOT NULL,
+  `clients_address_id` INT NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_orders_client_idx` (`client_id` ASC) VISIBLE,
-  INDEX `fk_orders_clients_address_idx` (`client_address_id` ASC) VISIBLE,
+  INDEX `fk_orders_clients_address_idx` (`clients_address_id` ASC) VISIBLE,
   CONSTRAINT `fk_orders_client`
     FOREIGN KEY (`client_id`)
     REFERENCES `javaschool`.`client` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_orders_clients_address`
-    FOREIGN KEY (`client_address_id`)
+    FOREIGN KEY (`clients_address_id`)
     REFERENCES `javaschool`.`clients_address` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION
@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS `javaschool`.`product` (
   `parameters` VARCHAR(45) NULL,
   `weight` DECIMAL(10,2) NULL,
   `volume` DECIMAL(10,2) NULL,
-  `quantityStock` INTEGER NULL,
+  `quantity_stock` INTEGER NULL,
   PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4;
@@ -112,7 +112,6 @@ CREATE TABLE IF NOT EXISTS `javaschool`.`order_has_product` (
     ON UPDATE NO ACTION
 ) ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4;
-
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
