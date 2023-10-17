@@ -3,11 +3,14 @@ import es.javaschool.springbootosisfinal_task.domain.OrderHasProduct;
 import es.javaschool.springbootosisfinal_task.domain.Orders;
 import es.javaschool.springbootosisfinal_task.domain.Product;
 import es.javaschool.springbootosisfinal_task.dto.OrderHasProductDTO;
+import es.javaschool.springbootosisfinal_task.exception.ResourceNotFoundException;
 import es.javaschool.springbootosisfinal_task.repositories.OrderHasProductRepository;
 import es.javaschool.springbootosisfinal_task.repositories.OrdersRepository;
 import es.javaschool.springbootosisfinal_task.repositories.ProductRepository;
 import es.javaschool.springbootosisfinal_task.services.orderHasProductServices.OrderHasProductService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Order;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
@@ -34,6 +37,11 @@ public class OrderHasProductController {
     @GetMapping ("/list")
     public String listAll(Model model){
         List<OrderHasProductDTO> orderHasProductDTOS = orderHasProductService.listAll();
+
+        if (orderHasProductDTOS == null || orderHasProductDTOS.isEmpty()){
+            throw  new ResourceNotFoundException("list");
+        }
+
         model.addAttribute("orderHasProducts", orderHasProductDTOS);
         return "orderHasProduct/list";
     }
@@ -48,7 +56,7 @@ public class OrderHasProductController {
     }
 
     @PostMapping("/create")
-    public String createOrderHasProduct (@ModelAttribute("orderHasProductsCreate") OrderHasProductDTO orderHasProductDTO, @RequestParam("orders.id") Long clientId, @RequestParam("product.id") Long productId){
+    public String createOrderHasProduct (@Valid @ModelAttribute("orderHasProductsCreate") OrderHasProductDTO orderHasProductDTO, @RequestParam("orders.id") Long clientId, @RequestParam("product.id") Long productId){
 
         Orders orders = ordersRepository.findById(clientId).orElse(null);
         Product product = productRepository.findById(productId).orElse(null);
@@ -59,29 +67,43 @@ public class OrderHasProductController {
             orderHasProductService.createOrderHasProduct(orderHasProductDTO);
             return "redirect:/orderHasProduct/list";
         }else {
-            throw new RuntimeException("The product or the orders cannot be found");
+            throw new ResourceNotFoundException("create");
         }
 
     }
 
     @GetMapping("/getby/{id}")
     public String getOrderHasProductById (@PathVariable Long id, Model model){
-        OrderHasProduct orderHasProduct = orderHasProductService.getOrderHasProductById(id);
-        model.addAttribute("orderHasProducts", orderHasProduct);
-        return "orderHasProduct/getbyid";
+
+        try {
+            OrderHasProduct orderHasProduct = orderHasProductService.getOrderHasProductById(id);
+            model.addAttribute("orderHasProducts", orderHasProduct);
+            return "orderHasProduct/getbyid";
+        }catch (EntityNotFoundException exception){
+            throw new ResourceNotFoundException("getby","id", id);
+        }
+
+
     }
 
     @GetMapping ("/update/{id}")
     public String updatePage (@PathVariable Long id, Model model){
-        OrderHasProduct orderHasProduct = orderHasProductService.getOrderHasProductById(id);
-        model.addAttribute("orderHasProducts", orderHasProduct);
-        return "orderHasProduct/update";
+
+        try{
+           OrderHasProduct orderHasProduct = orderHasProductService.getOrderHasProductById(id);
+           model.addAttribute("orderHasProducts", orderHasProduct);
+           return "orderHasProduct/update";
+       }catch (EntityNotFoundException exception){
+            throw new ResourceNotFoundException("update", "id", id);
+        }
+
+
 
 
     }
 
     @PostMapping ("/update")
-    public String updateOrderHasProduct (@ModelAttribute("orderHasProducts") OrderHasProductDTO orderHasProductDTO){
+    public String updateOrderHasProduct (@Valid @ModelAttribute("orderHasProducts") OrderHasProductDTO orderHasProductDTO){
         orderHasProductService.updateOrderHasProduct(orderHasProductDTO);
         return "redirect:/orderHasProduct/list";
     }

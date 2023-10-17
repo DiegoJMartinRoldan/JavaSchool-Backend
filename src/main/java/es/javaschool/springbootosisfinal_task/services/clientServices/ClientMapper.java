@@ -19,6 +19,7 @@ public class ClientMapper {
         clientDTO.setSurname(client.getSurname());
         clientDTO.setDateOfBirth((Date) client.getDateOfBirth());
         clientDTO.setEmail(client.getEmail());
+        clientDTO.setPassword(client.getPassword());
 
         return  clientDTO;
 
@@ -32,6 +33,7 @@ public class ClientMapper {
         client.setSurname(clientDTO.getSurname());
         client.setDateOfBirth(clientDTO.getDateOfBirth());
         client.setEmail(clientDTO.getEmail());
+        client.setPassword(clientDTO.getPassword());
 
         return client;
     }

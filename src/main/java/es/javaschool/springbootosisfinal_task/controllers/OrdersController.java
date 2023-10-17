@@ -3,10 +3,12 @@ import es.javaschool.springbootosisfinal_task.domain.Client;
 import es.javaschool.springbootosisfinal_task.domain.ClientsAddress;
 import es.javaschool.springbootosisfinal_task.domain.Orders;
 import es.javaschool.springbootosisfinal_task.dto.OrdersDTO;
+import es.javaschool.springbootosisfinal_task.exception.ResourceNotFoundException;
 import es.javaschool.springbootosisfinal_task.repositories.ClientRepository;
 import es.javaschool.springbootosisfinal_task.repositories.ClientsAddressRepository;
 import es.javaschool.springbootosisfinal_task.services.ordersServices.OrdersMapper;
 import es.javaschool.springbootosisfinal_task.services.ordersServices.OrdersService;
+import jakarta.persistence.EntityNotFoundException;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,7 +37,12 @@ public class OrdersController {
     @GetMapping("/list")
      public  String listAll(Model model){
         List<OrdersDTO> ordersDTOS = ordersService.listAll();
-        System.out.println(ordersDTOS); // Imprime los datos
+
+        if (ordersDTOS == null || ordersDTOS.isEmpty()){
+            throw new ResourceNotFoundException("list");
+        }
+
+
         model.addAttribute("orderslist", ordersDTOS);
         return "orders/list";
 
@@ -53,15 +60,17 @@ public class OrdersController {
 
     @PostMapping("/create")
     public String createOrder(@ModelAttribute("orderCreate") OrdersDTO ordersDTO, @RequestParam("client.id") Long clientId, @RequestParam("address.id") Long addressId) {
+
         Client client = clientRepository.findById(clientId).orElse(null);
         ClientsAddress clientsAddress = clientsAddressRepository.findById(addressId).orElse(null);
+
         if (client != null && clientsAddress != null) {
             ordersDTO.setClient(client);
             ordersDTO.setClientsAddress(clientsAddress);
             ordersService.createOrder(ordersDTO);
             return "redirect:/orders/list";
         } else {
-            throw new RuntimeException("The client or the client's address was not found. Please check the provided values.");
+            throw new ResourceNotFoundException("create");
         }
     }
 
@@ -70,9 +79,14 @@ public class OrdersController {
     @GetMapping("/getby/{id}")
     public  String getOrderById (@PathVariable Long id, Model model){
 
-        Orders order = ordersService.getOrderById(id);
-        model.addAttribute("orders", order);
-        return "orders/getbyid";
+       try{
+           Orders order = ordersService.getOrderById(id);
+           model.addAttribute("orders", order);
+           return "orders/getbyid";
+       }catch (EntityNotFoundException exception){
+           throw new ResourceNotFoundException("getby","id", id);
+       }
+
 
     }
 
@@ -80,9 +94,17 @@ public class OrdersController {
 
     @GetMapping("/update/{id}")
     public String updatePage(@PathVariable Long id, Model model){
-        Orders order = ordersService.getOrderById(id);
-        model.addAttribute("orders", order);
-        return "orders/update";
+
+        try {
+            Orders order = ordersService.getOrderById(id);
+            model.addAttribute("orders", order);
+            return "orders/update";
+        }catch (EntityNotFoundException exception){
+            throw new ResourceNotFoundException("update", "id", id);
+        }
+
+
+
     }
 
     @PostMapping("/update")

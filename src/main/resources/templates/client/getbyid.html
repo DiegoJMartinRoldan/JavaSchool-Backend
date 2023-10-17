@@ -20,7 +20,7 @@
                     <th>Surname</th>
                     <th>Date Of Birth</th>
                     <th>Email</th>
-                    <!--     <th>Password</th>  maybe i will use it in the future -->
+                    <th>Password</th>
                 </tr>
             </thead>
             <tbody>
@@ -29,6 +29,8 @@
                     <td th:text="${client.surname}"></td>
                     <td th:text="${client.dateOfBirth}"></td>
                     <td th:text="${client.email}"></td>
+                    <td th:text="${client.password}"></td>
+
                 </tr>
             </tbody>
         </table>
