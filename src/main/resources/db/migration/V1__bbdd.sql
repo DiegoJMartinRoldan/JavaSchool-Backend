@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS `javaschool`.`order_has_product` (
   CONSTRAINT `fk_order_has_product_orders`
     FOREIGN KEY (`orders_id`)
     REFERENCES `javaschool`.`orders` (`id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_order_has_product_product`
     FOREIGN KEY (`product_id`)
