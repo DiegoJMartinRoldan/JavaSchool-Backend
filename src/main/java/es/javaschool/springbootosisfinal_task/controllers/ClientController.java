@@ -1,107 +1,89 @@
 package es.javaschool.springbootosisfinal_task.controllers;
 import es.javaschool.springbootosisfinal_task.domain.Client;
 import es.javaschool.springbootosisfinal_task.dto.ClientDTO;
-import es.javaschool.springbootosisfinal_task.exception.BadRequestException;
 import es.javaschool.springbootosisfinal_task.exception.ResourceNotFoundException;
 import es.javaschool.springbootosisfinal_task.services.clientServices.ClientService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 
-@Controller
+
+@RestController
 @RequestMapping("${client.Controller.url}")
 public class ClientController {
-
 
     @Autowired
     private ClientService clientService;
 
-
-    //List Clients
     @GetMapping("/list")
-    public String listAll(Model model){
+    public ResponseEntity<List<ClientDTO>> listAll() {
         List<ClientDTO> clientDTOS = clientService.listAll();
-
-        if (clientDTOS == null || clientDTOS.isEmpty()){
-            throw  new ResourceNotFoundException("list");
+        if (clientDTOS.isEmpty()) {
+            throw new ResourceNotFoundException("list");
         }
-
-        model.addAttribute("clients", clientDTOS);
-        return "client/list";
-    }
-
-
-    //Create Clients
-    @GetMapping("/create")
-    public String createPage(Model model){
-        ClientDTO clientDTO = new ClientDTO();
-        model.addAttribute("clientCreate", clientDTO);
-        return "client/create";
+        return new ResponseEntity<>(clientDTOS, HttpStatus.OK);
     }
 
     @PostMapping("/create")
-    public String createClient (@Valid ClientDTO clientDTO){
-        clientService.createClient(clientDTO);
-        return "redirect:/client/list";
+    public ResponseEntity<String> createClient(@Valid @RequestBody ClientDTO clientDTO) {
+
+        try {
+            clientService.createClient(clientDTO);
+            return new ResponseEntity<>("Client created successfully", HttpStatus.CREATED);
+        }catch (Exception e){
+            throw  new ResourceNotFoundException("create");
+        }
+
 
     }
 
-
-    //Get Clients by Id
     @GetMapping("/getby/{id}")
-    public String getClientById( @PathVariable Long id, Model model){
-
+    public ResponseEntity<Client> getClientById(@PathVariable Long id) {
         try{
             Client client = clientService.getClientById(id);
-            model.addAttribute("clients", client);
-            return "/client/getbyid";
-
+            return new ResponseEntity<>(client, HttpStatus.OK);
         }catch (EntityNotFoundException exception){
-            throw new ResourceNotFoundException("getby","id", id);
+            throw  new ResourceNotFoundException("getby", "id", id);
         }
 
     }
 
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> update(@PathVariable Long id, @Valid @RequestBody ClientDTO clientDTO) {
 
-    //Update Clients
-    @GetMapping("/update/{id}")
-    public String updatePage(@PathVariable Long id, Model model){
+        try{
+            clientService.updateClient(clientDTO);
+            return new ResponseEntity<>("Client updated successfully", HttpStatus.OK);
+        }catch (EntityNotFoundException exception){
+            throw  new ResourceNotFoundException("update", "id", id);
+        }
+
+
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> delete(@PathVariable Long id) {
 
         try {
             Client client = clientService.getClientById(id);
-            model.addAttribute("clients", client);
-            return "client/update";
 
-        }catch (EntityNotFoundException exception){
-            throw new ResourceNotFoundException("update", "id", id);
+            if (client == null) {
+                throw new ResourceNotFoundException("delete", "id", id);
+            }
+
+            clientService.delete(id);
+            return new ResponseEntity<>("Client deleted successfully", HttpStatus.OK);
+
+        } catch (EntityNotFoundException exception) {
+            throw new ResourceNotFoundException("delete", "id", id);
         }
 
-
     }
-
-    @PostMapping("/update")
-    public String update(@Valid @ModelAttribute("clients") ClientDTO clientDTO) {
-        clientService.updateClient(clientDTO);
-        return "redirect:/client/list";
-    }
-
-
-
-    //Delete Clients
-    @DeleteMapping("/delete/{id}")
-    public String delete(@PathVariable Long id){
-        clientService.delete(id);
-        return "redirect:/client/list";
-
-    }
-
-
 }
+
