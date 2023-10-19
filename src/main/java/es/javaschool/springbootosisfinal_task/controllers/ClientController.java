@@ -47,7 +47,12 @@ public class ClientController {
     public ResponseEntity<Client> getClientById(@PathVariable Long id) {
         try{
             Client client = clientService.getClientById(id);
+
+            if (client == null) {
+                throw new ResourceNotFoundException("getby", "id", id);
+            }
             return new ResponseEntity<>(client, HttpStatus.OK);
+
         }catch (EntityNotFoundException exception){
             throw  new ResourceNotFoundException("getby", "id", id);
         }
