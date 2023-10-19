@@ -27,9 +27,7 @@ public class OrdersDTO {
     @NotEmpty(message = "Order status is required")
     private String orderStatus;
 
-    @NotNull(message = "Client is required")
     private Client client;
 
-    @NotNull(message = "Client's address is required")
     private ClientsAddress clientsAddress;
 }

@@ -2,19 +2,20 @@ package es.javaschool.springbootosisfinal_task.controllers;
 import es.javaschool.springbootosisfinal_task.domain.Client;
 import es.javaschool.springbootosisfinal_task.domain.ClientsAddress;
 import es.javaschool.springbootosisfinal_task.domain.Orders;
+import es.javaschool.springbootosisfinal_task.dto.ClientDTO;
 import es.javaschool.springbootosisfinal_task.dto.OrdersDTO;
 import es.javaschool.springbootosisfinal_task.exception.ResourceNotFoundException;
 import es.javaschool.springbootosisfinal_task.repositories.ClientRepository;
 import es.javaschool.springbootosisfinal_task.repositories.ClientsAddressRepository;
-import es.javaschool.springbootosisfinal_task.services.ordersServices.OrdersMapper;
 import es.javaschool.springbootosisfinal_task.services.ordersServices.OrdersService;
 import jakarta.persistence.EntityNotFoundException;
-import org.aspectj.weaver.ast.Or;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.List;
 
@@ -31,100 +32,73 @@ public class OrdersController {
     @Autowired
     private ClientsAddressRepository clientsAddressRepository;
 
-
-
-    //List
     @GetMapping("/list")
-     public  String listAll(Model model){
+    public ResponseEntity<List<OrdersDTO>> listAll() {
         List<OrdersDTO> ordersDTOS = ordersService.listAll();
-
-        if (ordersDTOS == null || ordersDTOS.isEmpty()){
+        if (ordersDTOS.isEmpty()) {
             throw new ResourceNotFoundException("list");
         }
-
-
-        model.addAttribute("orderslist", ordersDTOS);
-        return "orders/list";
-
+        return new ResponseEntity<>(ordersDTOS, HttpStatus.OK);
     }
 
-
-    //Create
-    @GetMapping("/create")
-    public String createPage (Model model){
-        OrdersDTO ordersDTO = new OrdersDTO();
-        model.addAttribute("orderCreate", ordersDTO);
-        return "orders/create";
-
-    }
 
     @PostMapping("/create")
-    public String createOrder(@ModelAttribute("orderCreate") OrdersDTO ordersDTO, @RequestParam("client.id") Long clientId, @RequestParam("address.id") Long addressId) {
+    public ResponseEntity<String> createOrder(@Valid @RequestBody OrdersDTO ordersDTO) {
+
+        Long clientId = ordersDTO.getClient().getId();
+        Long addressId = ordersDTO.getClientsAddress().getId();
 
         Client client = clientRepository.findById(clientId).orElse(null);
         ClientsAddress clientsAddress = clientsAddressRepository.findById(addressId).orElse(null);
 
         if (client != null && clientsAddress != null) {
+
             ordersDTO.setClient(client);
             ordersDTO.setClientsAddress(clientsAddress);
             ordersService.createOrder(ordersDTO);
-            return "redirect:/orders/list";
+            return new ResponseEntity<>("Order created successfully", HttpStatus.CREATED);
+
         } else {
             throw new ResourceNotFoundException("create");
         }
     }
 
-    //Get by id
-
     @GetMapping("/getby/{id}")
-    public  String getOrderById (@PathVariable Long id, Model model){
-
-       try{
-           Orders order = ordersService.getOrderById(id);
-           model.addAttribute("orders", order);
-           return "orders/getbyid";
-       }catch (EntityNotFoundException exception){
-           throw new ResourceNotFoundException("getby","id", id);
-       }
-
-
-    }
-
-    //Update
-
-    @GetMapping("/update/{id}")
-    public String updatePage(@PathVariable Long id, Model model){
-
+    public ResponseEntity<Orders> getOrderById(@PathVariable Long id) {
         try {
             Orders order = ordersService.getOrderById(id);
-            model.addAttribute("orders", order);
-            return "orders/update";
-        }catch (EntityNotFoundException exception){
+            if (order == null) {
+                throw new ResourceNotFoundException("getby", "id", id);
+            }
+            return new ResponseEntity<>(order, HttpStatus.OK);
+        } catch (EntityNotFoundException exception) {
+            throw new ResourceNotFoundException("getby", "id", id);
+        }
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> updateOrder(@PathVariable Long id, @Valid @RequestBody OrdersDTO ordersDTO) {
+        try {
+            ordersService.updateClient(ordersDTO);
+            return new ResponseEntity<>("Order updated successfully", HttpStatus.OK);
+        } catch (EntityNotFoundException exception) {
             throw new ResourceNotFoundException("update", "id", id);
         }
-
-
-
     }
 
-    @PostMapping("/update")
-    public  String updateOrder (@ModelAttribute("orders") OrdersDTO ordersDTO){
-        ordersService.updateClient(ordersDTO);
-        return "redirect:/orders/list";
-
-
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> delete(@PathVariable Long id) {
+        try {
+            Orders order = ordersService.getOrderById(id);
+            if (order == null) {
+                throw new ResourceNotFoundException("delete", "id", id);
+            }
+            ordersService.delete(id);
+            return new ResponseEntity<>("Order deleted successfully", HttpStatus.OK);
+        } catch (EntityNotFoundException exception) {
+            throw new ResourceNotFoundException("delete", "id", id);
+        }
     }
-
-    //Delete
-
-    @DeleteMapping ("/delete/{id}")
-    public RedirectView delete (@PathVariable Long id){
-        ordersService.delete(id);
-        return new RedirectView("/orders/list", true);
-
-    }
-
-
 
 
 
