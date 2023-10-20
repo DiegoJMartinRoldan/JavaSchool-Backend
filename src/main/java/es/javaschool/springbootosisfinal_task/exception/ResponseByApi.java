@@ -16,8 +16,8 @@ public class ResponseByApi {
     private String url;
 
 
-    //No incluimos la fecha en este constructor porque lo está cogiendo de forma automática
-    //Tambien ponemos: this.url = url.replace("uri=", ""); Porque queremos uqe nos haga replace de lo que nos sale como url, que es ur: uri: /client/noseque, a solo url: es decir, un espacio vacío como se muestra.
+//We do not include the date in this constructor because it is taking it automatically
+    //We also put: this.url = url.replace("uri=", ""); Because we want to make us replace what we get as url, which is ur: uri: /client/noseque, to just url: that is, an empty space as shown.
 
     public ResponseByApi(String message, String url) {
         this.message = message;

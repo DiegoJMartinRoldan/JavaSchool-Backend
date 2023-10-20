@@ -17,7 +17,7 @@ public class ResourceNotFoundException extends RuntimeException {
 
 
 
-//Para una lista no necesitamos pasar el nombre de la entidad que estamos buscando solamente necesitamos el nombre del recurso, y en este caso el mensaje que imprimimos es que la lista no se puede encontrar.
+//For a list we do not need to pass the name of the entity we are looking for, we only need the name of the resource, and in this case the message we print is that the list cannot be found.
 
     public ResourceNotFoundException(String resourceName) {
         super(String.format("This %s does not exist in the system", resourceName));
@@ -25,8 +25,8 @@ public class ResourceNotFoundException extends RuntimeException {
 
     }
 
-    //Con super le decimos que nos extienda de la herencia el mensaje que se va a imprimir, en este caso extiende de RuntimeException
-   // Con String.format ponemos el mensaje que se va a mostrar a continuación. Con %s formateamos ese valor por resource name, tablefieldname y tablefield value
+    //With super we tell it to extend the message to be printed from the inheritance, in this case it extends RuntimeException
+    // With String.format we put the message that will be shown next. With %s we format that value by resource name, tablefieldname and tablefield value
 
     public ResourceNotFoundException(String resourceName, String tableFieldName, Object tableFieldValue) {
         super(String.format("%s with %s= '%s' Not Found", resourceName, tableFieldName, tableFieldValue));
