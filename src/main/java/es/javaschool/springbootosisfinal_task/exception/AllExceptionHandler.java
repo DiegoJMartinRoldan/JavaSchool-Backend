@@ -11,12 +11,12 @@ import org.springframework.web.context.request.WebRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-//Esta anotación significa que esta clase va a detectar todos los errores que se vayan a producir dentro del controlador, con los metodos correctos podremos personalizar el mensae que arroja
+//This annotation means that this class will detect all the errors that will occur within the controller, with the correct methods we can customize the message it throws
 @RestControllerAdvice
 public class AllExceptionHandler {
 
 
-    //Para cuando falla el @Valid en alguno de los campos que lo tienen, maneja la excepcion
+    //For when the @Valid fails in any of the fields that have it, handle the exception
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handlerMethodArgumentNotValidException(MethodArgumentNotValidException exception, WebRequest webRequest){
 
@@ -35,8 +35,8 @@ public class AllExceptionHandler {
 
 
 
-    // La excepción se lanza cuando un recurso específico solicitado no se encuentra en el servidor
-    // Me convierte el texto por defecto que yo tengo creado en ResourceNotFoundException en un json y no en un texto como estaba configurado
+    // Exception is thrown when a specific requested resource is not found on the server
+    // Converts the default text that I have created in ResourceNotFoundException into a json and not into a text as it was configured
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ResponseByApi> handlerResourceNotFoundException(ResourceNotFoundException exception, WebRequest webRequest){
 
@@ -52,7 +52,7 @@ public class AllExceptionHandler {
 
 
 
-  //Error por una solicitud incorrecta del cliente.
+    //Error due to incorrect client request.
   @ExceptionHandler(BadRequestException.class)
   public ResponseEntity<ResponseByApi> handlerBadRequestException(BadRequestException exception, WebRequest webRequest){
 
