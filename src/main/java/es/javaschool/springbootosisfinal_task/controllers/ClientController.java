@@ -24,16 +24,6 @@ public class ClientController {
     private ClientService clientService;
 
 
-
-    //Este método es para hacer pruebas
-    @GetMapping("/welcome")
-    public String welcome(){
-        return "Welcome, this is not secure";
-    }
-
-
-
-
     @GetMapping("/list")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<ClientDTO>> listAll() {
@@ -45,6 +35,7 @@ public class ClientController {
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<String> createClient(@Valid @RequestBody ClientDTO clientDTO) {
 
         try {
@@ -75,6 +66,7 @@ public class ClientController {
     }
 
     @PutMapping("/update/{id}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<String> update(@PathVariable Long id, @Valid @RequestBody ClientDTO clientDTO) {
 
         try{
