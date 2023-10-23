@@ -11,12 +11,12 @@ import org.springframework.web.context.request.WebRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-//This annotation means that this class will detect all the errors that will occur within the controller, with the correct methods we can customize the message it throws
+//Customizing Exceptions
 @RestControllerAdvice
 public class AllExceptionHandler {
 
 
-    //For when the @Valid fails in any of the fields that have it, handle the exception
+    //@Valid
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handlerMethodArgumentNotValidException(MethodArgumentNotValidException exception, WebRequest webRequest){
 
