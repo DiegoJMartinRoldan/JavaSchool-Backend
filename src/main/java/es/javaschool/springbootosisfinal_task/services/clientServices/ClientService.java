@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ClientService implements UserDetailsService {
+public class ClientService{
 
 
     @Autowired
@@ -75,22 +75,4 @@ public class ClientService implements UserDetailsService {
     }
 
 
-
-
-
-                            //Spring Security UserDetails
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    Optional<Client> client;
-    if (username.contains("@")){
-        client = clientRepository.findByEmail(username);
-    }else{
-        client = clientRepository.findByName(username);
-    }
-
-    return client.map(ClientToUserDetails::new)
-                .orElseThrow(()-> new UsernameNotFoundException("User not found"));
-
-
-    }
 }

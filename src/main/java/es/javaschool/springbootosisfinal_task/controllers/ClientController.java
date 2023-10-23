@@ -3,13 +3,17 @@ import es.javaschool.springbootosisfinal_task.domain.Client;
 import es.javaschool.springbootosisfinal_task.dto.ClientDTO;
 import es.javaschool.springbootosisfinal_task.exception.ResourceNotFoundException;
 import es.javaschool.springbootosisfinal_task.services.clientServices.ClientService;
+import es.javaschool.springbootosisfinal_task.config.JwtService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +27,12 @@ public class ClientController {
     @Autowired
     private ClientService clientService;
 
+    @Autowired
+    private JwtService jwtService;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
 
     @GetMapping("/list")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -35,7 +45,6 @@ public class ClientController {
     }
 
     @PostMapping("/create")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<String> createClient(@Valid @RequestBody ClientDTO clientDTO) {
 
         try {
@@ -50,6 +59,7 @@ public class ClientController {
 
 
     @GetMapping("/getby/{id}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<Client> getClientById(@PathVariable Long id) {
         try{
             Client client = clientService.getClientById(id);
@@ -66,7 +76,6 @@ public class ClientController {
     }
 
     @PutMapping("/update/{id}")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<String> update(@PathVariable Long id, @Valid @RequestBody ClientDTO clientDTO) {
 
         try{
@@ -97,5 +106,25 @@ public class ClientController {
         }
 
     }
+
+    //JWT
+    //Encargado de la autenticación y la generación de tokens.
+    //Mediante AuthenticationManager comprueba si el username y la password entregada estan autenticadas y si lo están arroja un token
+
+    @PostMapping("/authjwt")
+    public String tokenAuthentication (@RequestBody ClientDTO clientDTO){
+
+       Authentication authentication =
+               authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(clientDTO.getName(), clientDTO.getPassword()));
+            if (authentication.isAuthenticated()){
+                return jwtService.generateTokenMethod(clientDTO.getName());
+            }else {
+                throw new UsernameNotFoundException("invalid request");
+            }
+
+
+    }
+
+
 }
 

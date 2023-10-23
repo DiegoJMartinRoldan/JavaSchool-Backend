@@ -36,6 +36,7 @@ public class ClientsAddressController {
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<String> createClientAddress(@Valid @RequestBody ClientsAddresDTO clientsAddresDTO) {
         Client client = clientRepository.findById(clientsAddresDTO.getClient().getId()).orElse(null);
         if (client != null) {
@@ -61,6 +62,7 @@ public class ClientsAddressController {
     }
 
     @PutMapping("/update/{id}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<String> updateClientAddress(@PathVariable Long id, @Valid @RequestBody ClientsAddresDTO clientsAddresDTO) {
         try {
             clientAddressService.updateClientAddress(clientsAddresDTO);

@@ -1,4 +1,4 @@
-package es.javaschool.springbootosisfinal_task.services.clientServices;
+package es.javaschool.springbootosisfinal_task.config;
 
 import es.javaschool.springbootosisfinal_task.domain.Client;
 import org.springframework.security.core.GrantedAuthority;

@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -43,6 +44,7 @@ public class OrdersController {
 
 
     @PostMapping("/create")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<String> createOrder(@Valid @RequestBody OrdersDTO ordersDTO) {
 
         Long clientId = ordersDTO.getClient().getId();
