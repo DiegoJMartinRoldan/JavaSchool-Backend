@@ -8,6 +8,8 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +23,19 @@ public class ClientController {
     @Autowired
     private ClientService clientService;
 
+
+
+    //Este método es para hacer pruebas
+    @GetMapping("/welcome")
+    public String welcome(){
+        return "Welcome, this is not secure";
+    }
+
+
+
+
     @GetMapping("/list")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<ClientDTO>> listAll() {
         List<ClientDTO> clientDTOS = clientService.listAll();
         if (clientDTOS.isEmpty()) {
@@ -42,6 +56,7 @@ public class ClientController {
 
 
     }
+
 
     @GetMapping("/getby/{id}")
     public ResponseEntity<Client> getClientById(@PathVariable Long id) {

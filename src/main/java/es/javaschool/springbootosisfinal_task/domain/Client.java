@@ -1,5 +1,7 @@
 package es.javaschool.springbootosisfinal_task.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,6 +15,7 @@ import java.util.List;
 @ToString
 @Entity
 @Table(name = "client")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Client {
 
     @Id
@@ -34,6 +37,10 @@ public class Client {
 
     @Column(name = "password")
     private String password;
+
+    @Column(name = "role")
+    private String role;
+
 
 
    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)

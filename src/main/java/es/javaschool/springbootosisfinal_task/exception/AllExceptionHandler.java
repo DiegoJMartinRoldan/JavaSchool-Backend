@@ -40,27 +40,11 @@ public class AllExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ResponseByApi> handlerResourceNotFoundException(ResourceNotFoundException exception, WebRequest webRequest){
 
-        //LLamamos a ResponseApi y creamos una instancia, le mandamos el mensaje, y la ruta mediante webrequest para que me salga en falso para que solo me de los detalles de donde proviene el error
         ResponseByApi responseByApi = new ResponseByApi(exception.getMessage(), webRequest.getDescription(false));
 
 
         return new ResponseEntity<>(responseByApi, HttpStatus.NOT_FOUND);
     }
-
-
-
-
-
-
-    //Error due to incorrect client request.
-  @ExceptionHandler(BadRequestException.class)
-  public ResponseEntity<ResponseByApi> handlerBadRequestException(BadRequestException exception, WebRequest webRequest){
-
-      ResponseByApi responseByApi = new ResponseByApi(exception.getMessage(), webRequest.getDescription(false));
-
-
-      return new ResponseEntity<>(responseByApi, HttpStatus.BAD_REQUEST);
-  }
 
 
 

@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS `javaschool`.`client` (
   `date_of_birth` DATE NULL,
   `email` VARCHAR(45) NULL,
   `password` VARCHAR(45) NULL,
+  `role` VARCHAR(45) NULL,
   PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4;
@@ -112,6 +113,7 @@ CREATE TABLE IF NOT EXISTS `javaschool`.`order_has_product` (
     ON UPDATE NO ACTION
 ) ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4;
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

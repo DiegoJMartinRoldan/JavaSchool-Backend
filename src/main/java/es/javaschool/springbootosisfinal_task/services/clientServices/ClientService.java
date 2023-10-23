@@ -6,15 +6,21 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ClientService {
+public class ClientService implements UserDetailsService {
 
 
     @Autowired
@@ -22,6 +28,9 @@ public class ClientService {
 
     @Autowired
     private final ClientMapper clientMapper;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 
 
@@ -35,6 +44,8 @@ public class ClientService {
 
 
     public void createClient(ClientDTO clientDTO) {
+        clientDTO.setPassword(passwordEncoder.encode(clientDTO.getPassword()));
+
         Client client = clientMapper.convertDtoToEntity(clientDTO);
         clientRepository.save(client);
 
@@ -53,6 +64,7 @@ public class ClientService {
         existing.setSurname(converted.getSurname());
         existing.setDateOfBirth(converted.getDateOfBirth());
         existing.setEmail(converted.getEmail());
+        existing.setPassword(converted.getPassword());
 
         clientRepository.save(existing);
 
@@ -65,4 +77,20 @@ public class ClientService {
 
 
 
+
+                            //Spring Security UserDetails
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    Optional<Client> client;
+    if (username.contains("@")){
+        client = clientRepository.findByEmail(username);
+    }else{
+        client = clientRepository.findByName(username);
+    }
+
+    return client.map(ClientToUserDetails::new)
+                .orElseThrow(()-> new UsernameNotFoundException("User not found"));
+
+
+    }
 }

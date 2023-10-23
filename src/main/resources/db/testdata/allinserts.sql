@@ -1,8 +1,8 @@
-INSERT INTO `javaschool`.`client` (`name`, `surname`, `date_of_birth`, `email`, `password`)
+INSERT INTO `javaschool`.`client` (`name`, `surname`, `date_of_birth`, `email`, `password`, `role`)
 VALUES
-    ('Alberto', 'Martín', '1999-07-31', 'alberto@example.com', 'password123'),
-    ('María', 'Jimenez', '1985-03-20', 'maria@example.com', 'password321'),
-    ('Juan', 'García', '1995-07-10', 'pedro@example.com', 'password456');
+    ('Diego', 'Martín', '1999-07-31', 'diego@example.com', 'password123', 'ROLE_ADMIN'),
+    ('María', 'Jimenez', '1985-03-20', 'maria@example.com', 'password321', 'ROLE_USER'),
+    ('Juan', 'García', '1995-07-10', 'pedro@example.com', 'password456', 'ROLE_USER');
 
 INSERT INTO `javaschool`.`clients_address` (`country`, `city`, `postal_code`, `street`, `home`, `apartment`, `client_id`)
 VALUES
