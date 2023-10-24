@@ -1,6 +1,8 @@
 package es.javaschool.springbootosisfinal_task.services.ordersServices;
+import es.javaschool.springbootosisfinal_task.domain.Client;
 import es.javaschool.springbootosisfinal_task.domain.Orders;
 import es.javaschool.springbootosisfinal_task.dto.OrdersDTO;
+import es.javaschool.springbootosisfinal_task.repositories.ClientRepository;
 import es.javaschool.springbootosisfinal_task.repositories.OrdersRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -23,13 +25,24 @@ public class OrdersService {
     @Autowired
     private OrdersMapper ordersMapper;
 
-    public List<OrdersDTO> listAll() {
+
+
+    public List<OrdersDTO> listAll() {  // ADMIN Method
         return  ordersRepository
                 .findAll()
                 .stream()
                 .map(ordersMapper::convertEntityToDto)
                 .collect(Collectors.toList());
     }
+
+    public List<OrdersDTO> listOrdersByName(String username) {  // USER Method
+        List<Orders> orders = ordersRepository.findByClientName(username); // Asegúrate de que findByClientUsername acepta un String como argumento y devuelve una lista de Orders
+        return orders.stream()
+                .map(ordersMapper::convertEntityToDto) // Asegúrate de que convertEntityToDto acepta un objeto Orders como argumento
+                .collect(Collectors.toList());
+    }
+
+    //-----------------------
 
 
     public void createOrder(OrdersDTO ordersDTO) {
@@ -58,6 +71,7 @@ public class OrdersService {
     public void delete(Long id) {
         ordersRepository.deleteById(id);
     }
+
 
 
 }

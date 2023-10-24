@@ -10,9 +10,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class OrdersMapper {
 
-    @Autowired
-    private ClientMapper clientMapper;
-
 
 
     public OrdersDTO convertEntityToDto(Orders orders){

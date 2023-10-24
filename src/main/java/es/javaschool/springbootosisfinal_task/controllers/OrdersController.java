@@ -7,6 +7,7 @@ import es.javaschool.springbootosisfinal_task.dto.OrdersDTO;
 import es.javaschool.springbootosisfinal_task.exception.ResourceNotFoundException;
 import es.javaschool.springbootosisfinal_task.repositories.ClientRepository;
 import es.javaschool.springbootosisfinal_task.repositories.ClientsAddressRepository;
+import es.javaschool.springbootosisfinal_task.repositories.OrdersRepository;
 import es.javaschool.springbootosisfinal_task.services.ordersServices.OrdersService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -14,11 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("${order.Controller.url}")
@@ -33,12 +37,45 @@ public class OrdersController {
     @Autowired
     private ClientsAddressRepository clientsAddressRepository;
 
+    @Autowired
+    private OrdersRepository ordersRepository;
+
     @GetMapping("/list")
     public ResponseEntity<List<OrdersDTO>> listAll() {
-        List<OrdersDTO> ordersDTOS = ordersService.listAll();
-        if (ordersDTOS.isEmpty()) {
-            throw new ResourceNotFoundException("list");
+
+        // Creamos un string llamamos a "autentication" que almacena el contexto de seguridad actual del usuario que intenta acceder a este endpoint y llama con .getAuthentication, la autenticación del mismo
+        //Con get authorities extraemos las autoridades, incluimois un iterador para recorrer las autoridades que tenga, en nuestra app solo es una, next para obtener el siguiente objeto cuando va reccoriendo y getauthoriti devuelve la autoridad.
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String logged = authentication.getAuthorities().iterator().next().getAuthority();
+
+        List<OrdersDTO> ordersDTOS;
+
+        switch (logged){
+
+            case "ROLE_ADMIN":
+                ordersDTOS = ordersService.listAll(); // <-- First list method
+                break;
+
+            case "ROLE_USER":
+                String loggedUsername = authentication.getName();
+                Optional<Client> client = clientRepository.findByName(loggedUsername);
+
+                if (!client.isPresent()){
+                    throw new ResourceNotFoundException("ROLE_USER");
+                }
+
+                ordersDTOS = ordersService.listOrdersByName(loggedUsername); // <-- Second list method
+                break;
+            default:
+                throw new ResourceNotFoundException("list");
+                //revisar esta excepcion para personalizarla bien
         }
+
+        if (ordersDTOS.isEmpty()) {
+             throw new ResourceNotFoundException("list");
+        }
+
         return new ResponseEntity<>(ordersDTOS, HttpStatus.OK);
     }
 
@@ -64,6 +101,31 @@ public class OrdersController {
             throw new ResourceNotFoundException("create");
         }
     }
+
+    @PostMapping("/reorder/{id}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public ResponseEntity<String> reorder (@PathVariable Long id){
+
+        Optional<Orders> existingOrder = ordersRepository.findById(id);
+
+        if (existingOrder == null){
+            throw  new ResourceNotFoundException("reorder");
+        }
+        Orders newOrder = new Orders();
+        newOrder.setPaymentMethod(existingOrder.get().getPaymentMethod());
+        newOrder.setOrderStatus(existingOrder.get().getOrderStatus());
+        newOrder.setDeliveryMethod(existingOrder.get().getDeliveryMethod());
+        newOrder.setPaymentStatus(existingOrder.get().getPaymentStatus());
+        newOrder.setClient(existingOrder.get().getClient());
+        newOrder.setClientsAddress(existingOrder.get().getClientsAddress());
+
+        ordersRepository.save(newOrder);
+        return  new ResponseEntity<>("Reorder created succesfully", HttpStatus.CREATED);
+
+    }
+
+
+
 
     @GetMapping("/getby/{id}")
     public ResponseEntity<Orders> getOrderById(@PathVariable Long id) {
