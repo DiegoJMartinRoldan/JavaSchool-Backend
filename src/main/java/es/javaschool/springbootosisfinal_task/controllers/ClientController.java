@@ -1,4 +1,5 @@
 package es.javaschool.springbootosisfinal_task.controllers;
+import es.javaschool.springbootosisfinal_task.config.security.ChangePasswordRequest;
 import es.javaschool.springbootosisfinal_task.domain.Client;
 import es.javaschool.springbootosisfinal_task.config.jwt.RefreshToken;
 import es.javaschool.springbootosisfinal_task.dto.ClientDTO;
@@ -6,6 +7,7 @@ import es.javaschool.springbootosisfinal_task.config.jwt.RefreshRequest;
 import es.javaschool.springbootosisfinal_task.config.jwt.RefreshTokenDTO;
 import es.javaschool.springbootosisfinal_task.exception.ResourceNotFoundException;
 import es.javaschool.springbootosisfinal_task.config.jwt.RefreshTokenService;
+import es.javaschool.springbootosisfinal_task.repositories.ClientRepository;
 import es.javaschool.springbootosisfinal_task.services.clientServices.ClientService;
 import es.javaschool.springbootosisfinal_task.config.jwt.JwtService;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 
-
 @RestController
 @RequestMapping("${client.Controller.url}")
 public class ClientController {
@@ -39,6 +40,9 @@ public class ClientController {
 
     @Autowired
     private RefreshTokenService refreshTokenService;
+
+    @Autowired
+    private ClientRepository clientRepository;
 
 
     @GetMapping("/list")
@@ -152,6 +156,28 @@ public class ClientController {
                         .build();
             }).orElseThrow(() -> new RuntimeException("Token is not in the database"));
 
+    }
+
+
+                                //Change Password
+
+    //Método para cambiar la contraseña en el controlador, llamará al service con el método correspondiente para comprobar si la antigua contraseña coincide con la nueva
+    @PostMapping("/changePassword")
+    //Obtenemos como parámetros en este método la request que te piden para hacer la solicitud de cambio, que es el email, la contraseña y la nueva contraseña
+    public String changePassword(@RequestBody ChangePasswordRequest changePasswordRequest){
+
+        //Instanciamos cliente y decimos que cliente es igual a: llamamos al repositorio que nos busque por email y como tiene que decibir un parametro, recibe el que le hemos enviado en el request
+        Client client = clientRepository.findByEmail(changePasswordRequest.getEmail()).get();
+
+        //Si el método de verificar la contraseña que recibe nua instancia de cliente y la contraseña de la request y las compara para ver si son la misma mediante el metodo OldPassword
+        //Si no es valido todos lo anterior:
+        if (!clientService.oldPasswordIsValid(client, changePasswordRequest.getOldPwd())){
+           //Revisar esto con excepción personalizada
+            return "Incorrect old password";
+        }
+        //Si es valida la contraseña ejecuta el método changePassword para cambiar la contraseña
+        clientService.changePassword(client, changePasswordRequest.getNewPwd());
+        return "Password changed";
     }
 
 

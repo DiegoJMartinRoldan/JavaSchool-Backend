@@ -6,15 +6,11 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -74,5 +70,25 @@ public class ClientService{
         clientRepository.deleteById(id);
     }
 
+
+
+
+
+
+
+                             //Password Change
+
+    //We verify if the old password by comparing it with the new one that we receive from the method, are the same
+    public boolean oldPasswordIsValid(Client client, String oldPassword){
+        return passwordEncoder.matches(oldPassword, client.getPassword());
+
+    }
+
+
+    //Set the password of the entity with the new one
+    public void changePassword (@RequestBody Client client, String newPwd){
+        client.setPassword(passwordEncoder.encode(newPwd));
+        clientRepository.save(client);
+    }
 
 }
