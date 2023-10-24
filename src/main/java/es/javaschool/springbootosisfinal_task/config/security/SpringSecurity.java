@@ -3,6 +3,7 @@ package es.javaschool.springbootosisfinal_task.config.security;
 import es.javaschool.springbootosisfinal_task.config.jwt.JwtFilter;
 import es.javaschool.springbootosisfinal_task.config.security.ClientUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 @Configuration
 @EnableWebSecurity
@@ -29,12 +31,22 @@ public class SpringSecurity{
     @Autowired
     private ClientUserDetailsService clientUserDetailsService;
 
+
     @Autowired
-    private JwtFilter jwtFilter;
+    @Qualifier("handlerExceptionResolver")
+    private HandlerExceptionResolver handlerExceptionResolver;
+
+
+    @Bean
+    public  JwtFilter jwtFilter(){
+        //HandleException for the filter en Jwt
+        return  new JwtFilter(handlerExceptionResolver);
+    }
 
 
 
-                       //Spring Security AUTHENTICATION
+
+                                    //Spring Security AUTHENTICATION
    @Bean
    public UserDetailsService userDetailsService(){
        // ROLE_ADMIN , ROLE_USER from the database
@@ -43,7 +55,9 @@ public class SpringSecurity{
    }
 
 
-                        //Spring Security AUTHORIZATION
+
+
+                                    //Spring Security AUTHORIZATION
     @Bean
     //http url can be accessed
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
@@ -76,19 +90,21 @@ public class SpringSecurity{
                //Authentication Provider Method Filter
                .authenticationProvider(authenticationProvider())
                //Jwt Filter
-               .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+               .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class)
                .build();
     }
 
 
 
-
+    //BCryptPassword
     @Bean
     public PasswordEncoder passwordEncoder(){
         return  new BCryptPasswordEncoder();
     }
 
 
+
+    //Authentication Provider
      @Bean
      public AuthenticationProvider authenticationProvider(){
          DaoAuthenticationProvider authenticationProvider= new DaoAuthenticationProvider();
@@ -103,6 +119,9 @@ public class SpringSecurity{
      public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
        return authenticationConfiguration.getAuthenticationManager();
      }
+
+
+
 
 
 }
