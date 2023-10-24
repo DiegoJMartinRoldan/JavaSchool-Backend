@@ -1,5 +1,7 @@
-package es.javaschool.springbootosisfinal_task.config;
+package es.javaschool.springbootosisfinal_task.config.security;
 
+import es.javaschool.springbootosisfinal_task.config.jwt.JwtFilter;
+import es.javaschool.springbootosisfinal_task.config.security.ClientUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +27,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SpringSecurity{
 
     @Autowired
-    private  ClientUserDetailsService clientUserDetailsService;
+    private ClientUserDetailsService clientUserDetailsService;
 
     @Autowired
     private JwtFilter jwtFilter;
@@ -55,7 +57,8 @@ public class SpringSecurity{
                                          "/client/update/{id}",
                                          "/client/getby/{id}",
                                          "/client/delete/{id}",
-                                         "/client/authjwt").permitAll()
+                                         "/client/login",
+                                         "/client/refreshToken").permitAll()
                             .requestMatchers("/client/**",
                                              "/clientsAddress/**",
                                              "/orders/**",

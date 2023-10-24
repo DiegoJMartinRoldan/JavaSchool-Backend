@@ -1,7 +1,7 @@
-package es.javaschool.springbootosisfinal_task.config;
+package es.javaschool.springbootosisfinal_task.config.jwt;
 
 
-import es.javaschool.springbootosisfinal_task.services.clientServices.ClientService;
+import es.javaschool.springbootosisfinal_task.config.security.ClientUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

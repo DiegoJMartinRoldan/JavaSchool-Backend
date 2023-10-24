@@ -1,9 +1,13 @@
 package es.javaschool.springbootosisfinal_task.controllers;
 import es.javaschool.springbootosisfinal_task.domain.Client;
+import es.javaschool.springbootosisfinal_task.config.jwt.RefreshToken;
 import es.javaschool.springbootosisfinal_task.dto.ClientDTO;
+import es.javaschool.springbootosisfinal_task.config.jwt.RefreshRequest;
+import es.javaschool.springbootosisfinal_task.config.jwt.RefreshTokenDTO;
 import es.javaschool.springbootosisfinal_task.exception.ResourceNotFoundException;
+import es.javaschool.springbootosisfinal_task.config.jwt.RefreshTokenService;
 import es.javaschool.springbootosisfinal_task.services.clientServices.ClientService;
-import es.javaschool.springbootosisfinal_task.config.JwtService;
+import es.javaschool.springbootosisfinal_task.config.jwt.JwtService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +36,9 @@ public class ClientController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private RefreshTokenService refreshTokenService;
 
 
     @GetMapping("/list")
@@ -107,21 +114,43 @@ public class ClientController {
 
     }
 
-    //JWT
-    //Encargado de la autenticación y la generación de tokens.
-    //Mediante AuthenticationManager comprueba si el username y la password entregada estan autenticadas y si lo están arroja un token
 
-    @PostMapping("/authjwt")
-    public String tokenAuthentication (@RequestBody ClientDTO clientDTO){
+
+                                    //JWT
+
+    @PostMapping("/login")
+    public RefreshTokenDTO tokenAuthentication (@RequestBody ClientDTO clientDTO){
 
        Authentication authentication =
                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(clientDTO.getName(), clientDTO.getPassword()));
             if (authentication.isAuthenticated()){
-                return jwtService.generateTokenMethod(clientDTO.getName());
+                RefreshToken refreshToken = refreshTokenService.createTokenRefresh(clientDTO.getName());
+
+               return RefreshTokenDTO.builder()
+                        .accessToken(jwtService.generateTokenMethod(clientDTO.getName()))
+                        .token(refreshToken.getToken())
+                        .build();
             }else {
                 throw new UsernameNotFoundException("invalid request");
             }
 
+
+    }
+
+    //JWT Token Refresh
+    @PostMapping("/refreshToken")
+    public RefreshTokenDTO refreshToken(@RequestBody RefreshRequest refreshRequest){
+
+        return refreshTokenService.findByToken(refreshRequest.getToken())
+            .map(refreshTokenService::verifyExpiration)
+            .map(RefreshToken::getClient)
+            .map(client -> {
+                String accessToken = jwtService.generateTokenMethod(client.getName());
+                return RefreshTokenDTO.builder()
+                        .accessToken(accessToken)
+                        .token(refreshRequest.getToken())
+                        .build();
+            }).orElseThrow(() -> new RuntimeException("Token is not in the database"));
 
     }
 

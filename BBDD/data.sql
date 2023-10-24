@@ -114,6 +114,25 @@ CREATE TABLE IF NOT EXISTS `javaschool`.`order_has_product` (
 ) ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4;
 
+-- -----------------------------------------------------
+-- Table `javaschool`.`refresh_token`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `javaschool`.`refresh_token` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `token` VARCHAR(255) NOT NULL,
+  `expiration` DATETIME NOT NULL,
+  `client_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_refresh_token_client_idx` (`client_id` ASC) VISIBLE,
+  CONSTRAINT `fk_refresh_token_client`
+    FOREIGN KEY (`client_id`)
+    REFERENCES `javaschool`.`client` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+) ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4;
+
+
 
 
 INSERT INTO `javaschool`.`client` (`name`, `surname`, `date_of_birth`, `email`, `password`, `role`)
@@ -150,6 +169,7 @@ SELECT * FROM javaschool.clients_address;
 SELECT * FROM javaschool.orders;
 SELECT * FROM javaschool.product;
 SELECT * FROM javaschool.order_has_product;
+SELECT * FROM javaschool.refresh_token;
 
 
 

@@ -1,4 +1,5 @@
-package es.javaschool.springbootosisfinal_task.config;
+package es.javaschool.springbootosisfinal_task.config.security;
+import es.javaschool.springbootosisfinal_task.config.security.ClientToUserDetails;
 import es.javaschool.springbootosisfinal_task.domain.Client;
 import es.javaschool.springbootosisfinal_task.repositories.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;

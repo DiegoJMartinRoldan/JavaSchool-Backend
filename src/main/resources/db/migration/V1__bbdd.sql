@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS `javaschool`.`client` (
   `surname` VARCHAR(45) NULL,
   `date_of_birth` DATE NULL,
   `email` VARCHAR(45) NULL,
-  `password` VARCHAR(45) NULL,
+  `password` VARCHAR(100) NULL,
   `role` VARCHAR(45) NULL,
   PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -114,6 +114,23 @@ CREATE TABLE IF NOT EXISTS `javaschool`.`order_has_product` (
 ) ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4;
 
+-- -----------------------------------------------------
+-- Table `javaschool`.`refresh_token`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `javaschool`.`refresh_token` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `token` VARCHAR(255) NOT NULL,
+  `expiration` DATETIME NOT NULL,
+  `client_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_refresh_token_client_idx` (`client_id` ASC) VISIBLE,
+  CONSTRAINT `fk_refresh_token_client`
+    FOREIGN KEY (`client_id`)
+    REFERENCES `javaschool`.`client` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+) ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4;
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

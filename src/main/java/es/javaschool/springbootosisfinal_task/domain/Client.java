@@ -43,10 +43,13 @@ public class Client {
 
 
 
+
    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
    private List<Orders> orders;
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
     private List<ClientsAddress> clientsAddresses;
+
+
 
 }

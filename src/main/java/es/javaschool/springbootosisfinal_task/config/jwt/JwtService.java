@@ -1,4 +1,4 @@
-package es.javaschool.springbootosisfinal_task.config;
+package es.javaschool.springbootosisfinal_task.config.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -32,7 +32,7 @@ public class JwtService {
         return Jwts.builder()
                 .claims(response)
                 .subject(name).issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis()+1000*60*30))
+                .expiration(new Date(System.currentTimeMillis()+1000*60*2))
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
