@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS `javaschool`.`orders` (
   `delivery_method` VARCHAR(45) NULL,
   `payment_status` VARCHAR(45) NULL,
   `order_status` VARCHAR(45) NULL,
+  `order_date` DATE NULL,
   `client_id` INT NOT NULL,
   `clients_address_id` INT NOT NULL,
   PRIMARY KEY (`id`),

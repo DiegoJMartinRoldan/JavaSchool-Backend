@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -26,6 +28,10 @@ public class OrdersDTO {
 
     @NotEmpty(message = "Order status is required")
     private String orderStatus;
+
+    @NotNull
+    private Date orderDate;
+
 
     private Client client;
 

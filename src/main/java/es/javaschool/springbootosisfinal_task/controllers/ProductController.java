@@ -79,5 +79,26 @@ public class ProductController {
         }
     }
 
+                                    //Catalog
+
+    @PostMapping("/catalogFilter")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public ResponseEntity<List<ProductDTO>> catalogFiltering (@RequestBody ProductDTO productDTO){
+
+        List<ProductDTO> result = productService.catalogFiltering(productDTO);
+        return ResponseEntity.ok(result);
+
+    }
+
+    @PostMapping("/newCatalogCategory")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<String> newCatalogCategory (@RequestBody ProductDTO productDTO){
+
+         productService.createNewCatalogCategoruy(productDTO);
+
+        return new ResponseEntity<>("New category created suscessfully", HttpStatus.OK);
+
+    }
+
 
 }

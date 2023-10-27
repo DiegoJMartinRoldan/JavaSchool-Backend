@@ -37,4 +37,7 @@ public class ClientDTO {
     private String role;
 
 
+    public ClientDTO(Long id, String name, Long totalOrders) {
+
+    }
 }

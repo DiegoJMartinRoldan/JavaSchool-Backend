@@ -78,7 +78,8 @@ public class SpringSecurity{
                                              "/clientsAddress/**",
                                              "/orders/**",
                                              "/product/**",
-                                             "/orderHasProduct/**")
+                                             "/orderHasProduct/**",
+                                             "/statistics/**")
                             .authenticated();
 
                 })

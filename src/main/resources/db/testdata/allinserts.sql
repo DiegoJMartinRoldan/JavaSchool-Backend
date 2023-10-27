@@ -10,9 +10,9 @@ VALUES
     ('United States', 'New York', '10001', 'Main Street', 'apartment','123A', 2),
     ('France', 'Paris', '75008', 'Champs-Élysées', 'house','578', 3);
 
-INSERT INTO `javaschool`.`orders` (`payment_method`, `delivery_method`, `payment_status`, `order_status`, `client_id`, `clients_address_id`)
+INSERT INTO `javaschool`.`orders` (`payment_method`, `delivery_method`, `payment_status`, `order_status`, `order_date`, `client_id`, `clients_address_id`)
 VALUES
-	('Credit Card', 'Express Shipping', 'Paid', 'Processing', 1, 2);
+	('Credit Card', 'Express Shipping', 'Paid', 'Processing', '1995-07-10', 1, 2);
 
 
 INSERT INTO `javaschool`.`product` (`title`, `price`, `category`, `parameters`, `weight`, `volume`, `quantity_stock`)

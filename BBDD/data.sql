@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS `javaschool`.`orders` (
   `delivery_method` VARCHAR(45) NULL,
   `payment_status` VARCHAR(45) NULL,
   `order_status` VARCHAR(45) NULL,
+  `order_date` DATE NULL,
   `client_id` INT NOT NULL,
   `clients_address_id` INT NOT NULL,
   PRIMARY KEY (`id`),
@@ -147,9 +148,9 @@ VALUES
     ('United States', 'New York', '10001', 'Main Street', 'apartment','123A', 2),
     ('France', 'Paris', '75008', 'Champs-Élysées', 'house','578', 3);
 
-INSERT INTO `javaschool`.`orders` (`payment_method`, `delivery_method`, `payment_status`, `order_status`, `client_id`, `clients_address_id`)
+INSERT INTO `javaschool`.`orders` (`payment_method`, `delivery_method`, `payment_status`, `order_status`, `order_date`, `client_id`, `clients_address_id`)
 VALUES
-	('Credit Card', 'Express Shipping', 'Paid', 'Processing', 1, 2);
+	('Credit Card', 'Express Shipping', 'Paid', 'Processing', '1995-07-10', 1, 2);
 
 
 INSERT INTO `javaschool`.`product` (`title`, `price`, `category`, `parameters`, `weight`, `volume`, `quantity_stock`)
@@ -171,6 +172,19 @@ SELECT * FROM javaschool.product;
 SELECT * FROM javaschool.order_has_product;
 SELECT * FROM javaschool.refresh_token;
 
+-- SELECT p.*, SUM(ohp.quantity) as total 
+-- FROM Product p 
+-- JOIN order_has_product ohp ON p.id = ohp.product_id 
+-- GROUP BY p.id 
+-- ORDER BY SUM(ohp.quantity) DESC
+-- LIMIT 10;
+
+-- SELECT c, SUM(ohp.quantity) as totalQuantity " +
+-- "FROM Client c " +
+-- "JOIN c.orders o " +
+-- "JOIN OrderHasProduct ohp ON o.id = ohp.orders.id " +
+-- "GROUP BY c " +
+-- "ORDER BY SUM(ohp.quantity) DESC
 
 
 

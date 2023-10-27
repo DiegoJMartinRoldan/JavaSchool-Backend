@@ -4,11 +4,13 @@ import es.javaschool.springbootosisfinal_task.domain.ClientsAddress;
 import es.javaschool.springbootosisfinal_task.domain.Orders;
 import es.javaschool.springbootosisfinal_task.dto.ClientDTO;
 import es.javaschool.springbootosisfinal_task.dto.OrdersDTO;
+import es.javaschool.springbootosisfinal_task.dto.ProductDTO;
 import es.javaschool.springbootosisfinal_task.exception.ResourceNotFoundException;
 import es.javaschool.springbootosisfinal_task.repositories.ClientRepository;
 import es.javaschool.springbootosisfinal_task.repositories.ClientsAddressRepository;
 import es.javaschool.springbootosisfinal_task.repositories.OrdersRepository;
 import es.javaschool.springbootosisfinal_task.services.ordersServices.OrdersService;
+import es.javaschool.springbootosisfinal_task.services.productServices.ProductService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,9 @@ public class OrdersController {
 
     @Autowired
     private OrdersRepository ordersRepository;
+
+    @Autowired
+    private ProductService productService;
 
     @GetMapping("/list")
     public ResponseEntity<List<OrdersDTO>> listAll() {
@@ -150,6 +155,20 @@ public class OrdersController {
         }
     }
 
+                            //Update Order Status
+    @PutMapping("/update/status/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public  ResponseEntity<String> updateOrderStatus (@PathVariable Long id, @RequestBody OrdersDTO ordersDTO){
+        try{
+            ordersService.updateOrderStatus(id, ordersDTO.getOrderStatus());
+            return  new ResponseEntity<>("Order status updated", HttpStatus.OK);
+
+        }catch (EntityNotFoundException exception){
+            throw  new ResourceNotFoundException("update", "id", id);
+
+        }
+    }
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id) {
         try {
@@ -163,6 +182,10 @@ public class OrdersController {
             throw new ResourceNotFoundException("delete", "id", id);
         }
     }
+
+
+
+
 
 
 

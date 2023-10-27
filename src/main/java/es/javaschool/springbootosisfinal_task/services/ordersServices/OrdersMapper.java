@@ -20,6 +20,7 @@ public class OrdersMapper {
         ordersDTO.setDeliveryMethod(orders.getDeliveryMethod());
         ordersDTO.setPaymentStatus(orders.getPaymentStatus());
         ordersDTO.setOrderStatus(orders.getOrderStatus());
+        ordersDTO.setOrderDate(orders.getOrderDate());
         ordersDTO.setClient(orders.getClient());
         ordersDTO.setClientsAddress(orders.getClientsAddress());
 
@@ -38,6 +39,7 @@ public class OrdersMapper {
         orders.setDeliveryMethod(ordersDTO.getDeliveryMethod());
         orders.setPaymentStatus(ordersDTO.getPaymentStatus());
         orders.setOrderStatus(ordersDTO.getOrderStatus());
+        orders.setOrderDate(ordersDTO.getOrderDate());
         orders.setClient(ordersDTO.getClient());
         orders.setClientsAddress(ordersDTO.getClientsAddress());
 

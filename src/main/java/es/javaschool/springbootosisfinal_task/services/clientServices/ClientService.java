@@ -6,10 +6,13 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -90,5 +93,27 @@ public class ClientService{
         client.setPassword(passwordEncoder.encode(newPwd));
         clientRepository.save(client);
     }
+
+
+
+    //Statistics
+
+    public List<Client> getTopClients() {
+        List<Object[]> topClients = clientRepository.findTopClients();
+
+        List<Client> result = new ArrayList<>();
+        for (Object[] objects : topClients){
+            if (objects[0] instanceof Client){
+                Client client = (Client) objects[0];
+                result.add(client);
+            }
+        }
+        return result;
+    }
+
+
+
+
+
 
 }
