@@ -73,7 +73,9 @@ public class SpringSecurity{
                                          "/client/delete/{id}",
                                          "/client/login",
                                          "/client/refreshToken",
-                                         "/client/changePassword").permitAll()
+                                         "/client/changePassword",
+                                         "/client/addToCart",
+                                         "/client/cart").permitAll()
                             .requestMatchers("/client/**",
                                              "/clientsAddress/**",
                                              "/orders/**",

@@ -2,15 +2,19 @@ package es.javaschool.springbootosisfinal_task.controllers;
 import es.javaschool.springbootosisfinal_task.config.security.ChangePasswordRequest;
 import es.javaschool.springbootosisfinal_task.domain.Client;
 import es.javaschool.springbootosisfinal_task.config.jwt.RefreshToken;
+import es.javaschool.springbootosisfinal_task.domain.Product;
 import es.javaschool.springbootosisfinal_task.dto.ClientDTO;
 import es.javaschool.springbootosisfinal_task.config.jwt.RefreshRequest;
 import es.javaschool.springbootosisfinal_task.config.jwt.RefreshTokenDTO;
+import es.javaschool.springbootosisfinal_task.dto.ProductDTO;
 import es.javaschool.springbootosisfinal_task.exception.ResourceNotFoundException;
 import es.javaschool.springbootosisfinal_task.config.jwt.RefreshTokenService;
 import es.javaschool.springbootosisfinal_task.repositories.ClientRepository;
 import es.javaschool.springbootosisfinal_task.services.clientServices.ClientService;
 import es.javaschool.springbootosisfinal_task.config.jwt.JwtService;
+import es.javaschool.springbootosisfinal_task.services.productServices.ProductService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,10 +23,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -43,6 +50,9 @@ public class ClientController {
 
     @Autowired
     private ClientRepository clientRepository;
+
+    @Autowired
+    private ProductService productService;
 
 
     @GetMapping("/list")
@@ -179,6 +189,41 @@ public class ClientController {
         clientService.changePassword(client, changePasswordRequest.getNewPwd());
         return "Password changed";
     }
+
+                                                 //Shopping Cart
+
+
+    @PostMapping("/addToCart")
+    public ResponseEntity<String> addToCart(@RequestBody ProductDTO productDTO, HttpSession session) {
+
+        // Get Product By id
+        Product product = productService.getProductById(productDTO.getId());
+        if (product == null) {
+            throw new RuntimeException("Product not available");
+        }
+
+        // Map Product in a shopping cart or create a new shoping cart
+        Map<Long, Product> cartProductMap = (Map<Long, Product>) session.getAttribute("cartProductMap");
+        if (cartProductMap == null) {
+            cartProductMap = new HashMap<>();
+            session.setAttribute("cartProductMap", cartProductMap);
+        }
+
+        // Add product to the shopping cart
+        cartProductMap.put(product.getId(), product);
+
+        return new ResponseEntity<>("Product added to cart successfully", HttpStatus.OK);
+    }
+
+    @GetMapping("/cart")
+    public ResponseEntity<Map<Long, Product>> getShoppingCart(HttpSession session){
+        Map<Long, Product> content = (Map<Long, Product>) session.getAttribute("cartProductMap");
+        if (content == null){
+            throw new ResourceNotFoundException("cart");
+        }
+        return new ResponseEntity<>(content, HttpStatus.OK);
+    }
+
 
 
 }
