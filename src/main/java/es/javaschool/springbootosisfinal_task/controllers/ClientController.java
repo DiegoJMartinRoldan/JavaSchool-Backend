@@ -2,6 +2,8 @@ package es.javaschool.springbootosisfinal_task.controllers;
 import es.javaschool.springbootosisfinal_task.config.security.ChangePasswordRequest;
 import es.javaschool.springbootosisfinal_task.domain.Client;
 import es.javaschool.springbootosisfinal_task.config.jwt.RefreshToken;
+import es.javaschool.springbootosisfinal_task.domain.ClientsAddress;
+import es.javaschool.springbootosisfinal_task.domain.Orders;
 import es.javaschool.springbootosisfinal_task.domain.Product;
 import es.javaschool.springbootosisfinal_task.dto.ClientDTO;
 import es.javaschool.springbootosisfinal_task.config.jwt.RefreshRequest;
@@ -225,6 +227,44 @@ public class ClientController {
     }
 
 
+    //Checkout
+
+ // @PostMapping("/checkout")
+ // @PreAuthorize("hasAuthority('ROLE_USER')")
+ // public ResponseEntity<String> checkout(HttpSession session, @RequestBody ClientsAddress clientAddress) {
+ //
+ //     Map<Long, Product> cartProductMap = (Map<Long, Product>) session.getAttribute("cartProductMap");
+ //
+ //     Orders newOrder = new Orders();
+ //
+ //     ordersService.createOrder(newOrder);
+//
+ //
+ //     session.removeAttribute("cartProductMap");
+//
+ //     return new ResponseEntity<>("Order placed successfully", HttpStatus.OK);
+ // }
+//
+ // @PostMapping("/checkout")
+ // @PreAuthorize("hasAuthority('ROLE_USER')")
+ // public ResponseEntity<String> checkout(HttpSession session, @RequestBody ClientAddress clientAddress) {
+ //
+ //     Map<Long, Product> cartProductMap = (Map<Long, Product>) session.getAttribute("cartProductMap");
+ //
+ //     Order newOrder = new Order();
+ //     newOrder.setClient(clientService.getCurrentClient());
+ //     newOrder.setClientAddress(clientAddress);
+ //     List<OrderHasProduct> orderItems = new ArrayList<>();
+ //     for (Map.Entry<Long, Product> entry : cartProductMap.entrySet()) {
+ //         Product product = entry.getValue();
+ //     }
+ //     newOrder.setOrderItems(orderItems);
+ //
+ //     session.removeAttribute("cartProductMap");
+//
+ //     return new ResponseEntity<>("Order placed successfully", HttpStatus.OK);
+ // }
+//
 
 }
 
