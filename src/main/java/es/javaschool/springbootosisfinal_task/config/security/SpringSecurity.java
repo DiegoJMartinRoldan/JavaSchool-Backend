@@ -4,8 +4,11 @@ import es.javaschool.springbootosisfinal_task.config.jwt.JwtFilter;
 import es.javaschool.springbootosisfinal_task.config.security.ClientUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -21,7 +24,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -75,7 +83,9 @@ public class SpringSecurity{
                                          "/client/refreshToken",
                                          "/client/changePassword",
                                          "/client/addToCart",
-                                         "/client/cart").permitAll()
+                                         "/client/cart",
+                                         "/product/list",
+                                         "/product/getby/{id}").permitAll()
                             .requestMatchers("/client/**",
                                              "/clientsAddress/**",
                                              "/orders/**",
@@ -125,6 +135,30 @@ public class SpringSecurity{
      }
 
 
+    //Cors Filter -  React Front end
+    @Bean
+    public FilterRegistrationBean corsFilter(){
+        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowCredentials(true);
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+        configuration.setAllowedHeaders(Arrays.asList(
+                org.springframework.http.HttpHeaders.AUTHORIZATION,
+                org.springframework.http.HttpHeaders.CONTENT_TYPE,
+                HttpHeaders.ACCEPT
+        ));
+        configuration.setAllowedMethods(Arrays.asList(
+                HttpMethod.GET.name(),
+                HttpMethod.POST.name(),
+                HttpMethod.PUT.name(),
+                HttpMethod.DELETE.name()
+        ));
+        configuration.setMaxAge(4000L);
+        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", configuration);
+        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean<>(new CorsFilter(urlBasedCorsConfigurationSource));
+        filterRegistrationBean.setOrder(-102);
+        return filterRegistrationBean;
+    }
 
 
 
