@@ -141,10 +141,10 @@ public class ClientController {
                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(clientDTO.getName(), clientDTO.getPassword()));
             if (authentication.isAuthenticated()){
                 RefreshToken refreshToken = refreshTokenService.createTokenRefresh(clientDTO.getName());
-
                return RefreshTokenDTO.builder()
                         .accessToken(jwtService.generateTokenMethod(clientDTO.getName()))
                         .token(refreshToken.getToken())
+                        .role(clientService.getClientRole(clientDTO.getName()))
                         .build();
             }else {
                 throw new UsernameNotFoundException("invalid request");

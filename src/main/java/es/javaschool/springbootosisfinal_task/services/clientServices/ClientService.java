@@ -111,6 +111,13 @@ public class ClientService{
         return result;
     }
 
+    public String getClientRole(String name) {
+        Client client = clientRepository.findByName(name).orElseThrow(() -> new EntityNotFoundException("Client not found with name: " + name));
+        return client.getRole();
+    }
+
+
+
 
 
 
