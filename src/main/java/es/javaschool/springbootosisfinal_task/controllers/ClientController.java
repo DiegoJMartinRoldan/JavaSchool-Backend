@@ -145,6 +145,7 @@ public class ClientController {
                         .accessToken(jwtService.generateTokenMethod(clientDTO.getName()))
                         .token(refreshToken.getToken())
                         .role(clientService.getClientRole(clientDTO.getName()))
+                        .id(clientService.getClientIdByName(clientDTO.getName()))
                         .build();
             }else {
                 throw new UsernameNotFoundException("invalid request");
@@ -166,6 +167,7 @@ public class ClientController {
                         .accessToken(accessToken)
                         .token(refreshRequest.getToken())
                         .role(clientService.getClientRole(client.getName()))
+                        .id(clientService.getClientIdByName(client.getName()))
                         .build();
             }).orElseThrow(() -> new RuntimeException("Token is not in the database"));
 

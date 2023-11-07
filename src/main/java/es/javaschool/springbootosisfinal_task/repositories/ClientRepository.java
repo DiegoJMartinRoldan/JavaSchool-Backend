@@ -3,6 +3,7 @@ import es.javaschool.springbootosisfinal_task.domain.Client;
 import es.javaschool.springbootosisfinal_task.dto.ClientDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -27,6 +28,8 @@ public interface ClientRepository extends JpaRepository<Client,Long> {
             "ORDER BY SUM(ohp.quantity) DESC")
     List<Object[]> findTopClients();
 
+    @Query("SELECT c.id FROM Client c WHERE c.name = :name")
+    Long findClientIdByName(@Param("name") String name);
 
 
 

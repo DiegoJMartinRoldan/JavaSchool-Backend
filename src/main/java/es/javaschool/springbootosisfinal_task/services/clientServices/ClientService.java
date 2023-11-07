@@ -117,6 +117,11 @@ public class ClientService{
     }
 
 
+    public Long getClientIdByName(String name) {
+        return clientRepository.findClientIdByName(name);
+    }
+
+
 
 
 

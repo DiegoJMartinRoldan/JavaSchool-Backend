@@ -12,6 +12,7 @@ public class RefreshTokenDTO {
     private String accessToken;
     private String token;
     private String role;
+    private Long id;
 
 
 }
