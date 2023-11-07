@@ -165,6 +165,7 @@ public class ClientController {
                 return RefreshTokenDTO.builder()
                         .accessToken(accessToken)
                         .token(refreshRequest.getToken())
+                        .role(clientService.getClientRole(client.getName()))
                         .build();
             }).orElseThrow(() -> new RuntimeException("Token is not in the database"));
 
