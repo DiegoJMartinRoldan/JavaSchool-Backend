@@ -1,6 +1,5 @@
 package es.javaschool.springbootosisfinal_task.repositories;
 import es.javaschool.springbootosisfinal_task.domain.Client;
-import es.javaschool.springbootosisfinal_task.dto.ClientDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,6 +15,7 @@ public interface ClientRepository extends JpaRepository<Client,Long> {
 
 
     Optional<Client> findByEmail(String username);
+    Optional<Client> findByEmailIgnoreCase(String email);
 
 
     //Query para obtener el top de clientes que más pedidos hacen

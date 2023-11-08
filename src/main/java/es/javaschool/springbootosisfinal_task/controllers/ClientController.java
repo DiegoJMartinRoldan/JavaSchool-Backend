@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 @RestController
@@ -69,15 +70,19 @@ public class ClientController {
 
     @PostMapping("/create")
     public ResponseEntity<String> createClient(@Valid @RequestBody ClientDTO clientDTO) {
+        String email = clientDTO.getEmail();
+        Optional<Client> existingClient = clientService.clientAlreadyExist(email);
 
-        try {
-            clientService.createClient(clientDTO);
-            return new ResponseEntity<>("Client created successfully", HttpStatus.CREATED);
-        }catch (Exception e){
-            throw  new ResourceNotFoundException("create");
+        if (existingClient.isPresent()) {
+            return new ResponseEntity<>("User already exists with the provided credentials", HttpStatus.CONFLICT);
+        } else {
+            try {
+                clientService.createClient(clientDTO);
+                return new ResponseEntity<>("Client created successfully", HttpStatus.CREATED);
+            } catch (Exception e) {
+                throw new ResourceNotFoundException("create");
+            }
         }
-
-
     }
 
 

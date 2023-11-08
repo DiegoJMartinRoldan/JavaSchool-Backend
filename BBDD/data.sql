@@ -128,8 +128,8 @@ CREATE TABLE IF NOT EXISTS `javaschool`.`refresh_token` (
   CONSTRAINT `fk_refresh_token_client`
     FOREIGN KEY (`client_id`)
     REFERENCES `javaschool`.`client` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
 ) ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4;
 
