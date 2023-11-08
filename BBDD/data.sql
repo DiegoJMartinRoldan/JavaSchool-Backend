@@ -19,7 +19,8 @@ CREATE TABLE IF NOT EXISTS `javaschool`.`client` (
   `surname` VARCHAR(45) NULL,
   `date_of_birth` DATE NULL,
   `email` VARCHAR(45) NULL,
-  `password` VARCHAR(45) NULL,
+  `password` VARCHAR(100) NULL,
+  `role` VARCHAR(45) NULL,
   PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4;
@@ -55,6 +56,7 @@ CREATE TABLE IF NOT EXISTS `javaschool`.`orders` (
   `delivery_method` VARCHAR(45) NULL,
   `payment_status` VARCHAR(45) NULL,
   `order_status` VARCHAR(45) NULL,
+  `order_date` DATE NULL,
   `client_id` INT NOT NULL,
   `clients_address_id` INT NOT NULL,
   PRIMARY KEY (`id`),
@@ -113,22 +115,42 @@ CREATE TABLE IF NOT EXISTS `javaschool`.`order_has_product` (
 ) ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4;
 
+-- -----------------------------------------------------
+-- Table `javaschool`.`refresh_token`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `javaschool`.`refresh_token` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `token` VARCHAR(255) NOT NULL,
+  `expiration` DATETIME NOT NULL,
+  `client_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_refresh_token_client_idx` (`client_id` ASC) VISIBLE,
+  CONSTRAINT `fk_refresh_token_client`
+    FOREIGN KEY (`client_id`)
+    REFERENCES `javaschool`.`client` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+) ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4;
 
-INSERT INTO `javaschool`.`client` (`name`, `surname`, `date_of_birth`, `email`, `password`)
+
+
+
+INSERT INTO `javaschool`.`client` (`name`, `surname`, `date_of_birth`, `email`, `password`, `role`)
 VALUES
-    ('Alberto', 'Martín', '1999-07-31', 'alberto@example.com', 'password123'),
-    ('María', 'Jimenez', '1985-03-20', 'maria@example.com', 'password321'),
-    ('Juan', 'García', '1995-07-10', 'pedro@example.com', 'password456');
+    ('Diego', 'Martín', '1999-07-31', 'diego@example.com', 'password123', 'ROLE_ADMIN'),
+    ('María', 'Jimenez', '1985-03-20', 'maria@example.com', 'password321', 'ROLE_USER'),
+    ('Juan', 'García', '1995-07-10', 'pedro@example.com', 'password456', 'ROLE_USER');
 
 INSERT INTO `javaschool`.`clients_address` (`country`, `city`, `postal_code`, `street`, `home`, `apartment`, `client_id`)
 VALUES
 	('Spain', 'Madrid', '28001', 'Calle de Serrano', 'apartment','45B', 1),
     ('United States', 'New York', '10001', 'Main Street', 'apartment','123A', 2),
     ('France', 'Paris', '75008', 'Champs-Élysées', 'house','578', 3);
-    
-INSERT INTO `javaschool`.`orders` (`payment_method`, `delivery_method`, `payment_status`, `order_status`, `client_id`, `clients_address_id`)
+
+INSERT INTO `javaschool`.`orders` (`payment_method`, `delivery_method`, `payment_status`, `order_status`, `order_date`, `client_id`, `clients_address_id`)
 VALUES
-	('Credit Card', 'Express Shipping', 'Paid', 'Processing', 1, 2);
+	('Credit Card', 'Express Shipping', 'Paid', 'Processing', '1995-07-10', 1, 2);
 
 
 INSERT INTO `javaschool`.`product` (`title`, `price`, `category`, `parameters`, `weight`, `volume`, `quantity_stock`)
@@ -136,22 +158,49 @@ VALUES
     ('MIDI Piano', 200, 'Musical Instruments', 'Type: MIDI, Color: Silver', 15, 0, 5),
     ('Modern Desk Lamp', 50, 'Home & Living', 'Power Source: Electric', 1, 0, 20),
     ('Rolex', 10000, 'Fashion', 'Material: Stainless Steel', 0, 0, 10);
- 
- 
+
+
 INSERT INTO `javaschool`.`order_has_product` (`orders_id`, `product_id`, `quantity`)
 VALUES
     (1, 1, 3);
-    
-    
--- SHOW TABLES;
- SELECT * FROM `javaschool`.`client`;
- SELECT * FROM `javaschool`.`clients_address`;
- SELECT * FROM `javaschool`.`orders`;
- SELECT * FROM `javaschool`.`product`;
- SELECT * FROM `javaschool`.`order_has_product`;
--- SELECT @@version
- 
-  -- ALTER TABLE client DROP COLUMN date_of_birth;
+
+
+SELECT * FROM javaschool.client;
+SELECT * FROM javaschool.clients_address;
+SELECT * FROM javaschool.orders;
+SELECT * FROM javaschool.product;
+SELECT * FROM javaschool.order_has_product;
+SELECT * FROM javaschool.refresh_token;
+
+-- SELECT p.*, SUM(ohp.quantity) as total 
+-- FROM Product p 
+-- JOIN order_has_product ohp ON p.id = ohp.product_id 
+-- GROUP BY p.id 
+-- ORDER BY SUM(ohp.quantity) DESC
+-- LIMIT 10;
+
+-- SELECT c, SUM(ohp.quantity) as totalQuantity " +
+-- "FROM Client c " +
+-- "JOIN c.orders o " +
+-- "JOIN OrderHasProduct ohp ON o.id = ohp.orders.id " +
+-- "GROUP BY c " +
+-- "ORDER BY SUM(ohp.quantity) DESC
+
+-- SELECT SUM(p.price) as monthlyEarnings
+-- FROM javaschool.orders o
+-- JOIN javaschool.order_has_product ohp ON o.id = ohp.orders_id
+-- JOIN javaschool.product p ON ohp.product_id = p.id
+-- WHERE YEAR(o.order_date) = 2023
+-- AND MONTH(o.order_date) = 10;
+
+
+-- SELECT SUM(p.price) as weeklyEarnings
+-- FROM javaschool.orders o
+-- JOIN javaschool.order_has_product ohp ON o.id = ohp.orders_id
+-- JOIN javaschool.product p ON ohp.product_id = p.id
+-- WHERE YEARWEEK(o.order_date) = YEARWEEK(CURRENT_DATE());
+
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

@@ -13,6 +13,8 @@ import jakarta.persistence.criteria.Order;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -33,89 +35,68 @@ public class OrderHasProductController {
     @Autowired
     private ProductRepository productRepository;
 
-
-    @GetMapping ("/list")
-    public String listAll(Model model){
+    @GetMapping("/list")
+    public ResponseEntity<List<OrderHasProductDTO>> listAll() {
         List<OrderHasProductDTO> orderHasProductDTOS = orderHasProductService.listAll();
-
-        if (orderHasProductDTOS == null || orderHasProductDTOS.isEmpty()){
-            throw  new ResourceNotFoundException("list");
+        if (orderHasProductDTOS.isEmpty()) {
+            throw new ResourceNotFoundException("list");
         }
-
-        model.addAttribute("orderHasProducts", orderHasProductDTOS);
-        return "orderHasProduct/list";
-    }
-
-
-    @GetMapping ("/create")
-    public String createPage (Model model){
-        OrderHasProductDTO orderHasProductDTO = new OrderHasProductDTO();
-        model.addAttribute("orderHasProductsCreate", orderHasProductDTO);
-        return "/orderHasProduct/create";
-
+        return new ResponseEntity<>(orderHasProductDTOS, HttpStatus.OK);
     }
 
     @PostMapping("/create")
-    public String createOrderHasProduct (@Valid @ModelAttribute("orderHasProductsCreate") OrderHasProductDTO orderHasProductDTO, @RequestParam("orders.id") Long clientId, @RequestParam("product.id") Long productId){
+    public ResponseEntity<String> createOrderHasProduct(@Valid @RequestBody OrderHasProductDTO orderHasProductDTO) {
 
-        Orders orders = ordersRepository.findById(clientId).orElse(null);
-        Product product = productRepository.findById(productId).orElse(null);
+       Long ordersId = orderHasProductDTO.getOrders().getId();
+       Long productsId = orderHasProductDTO.getProduct().getId();
 
-        if (orders !=  null && product != null){
+       Orders orders = ordersRepository.findById(ordersId).orElse(null);
+       Product product = productRepository.findById(productsId).orElse(null);
+
+        if (orders != null && product != null) {
             orderHasProductDTO.setOrders(orders);
             orderHasProductDTO.setProduct(product);
             orderHasProductService.createOrderHasProduct(orderHasProductDTO);
-            return "redirect:/orderHasProduct/list";
-        }else {
+            return new ResponseEntity<>("OrderHasProduct created successfully", HttpStatus.CREATED);
+        } else {
             throw new ResourceNotFoundException("create");
         }
-
     }
 
     @GetMapping("/getby/{id}")
-    public String getOrderHasProductById (@PathVariable Long id, Model model){
-
+    public ResponseEntity<OrderHasProduct> getOrderHasProductById(@PathVariable Long id) {
         try {
             OrderHasProduct orderHasProduct = orderHasProductService.getOrderHasProductById(id);
-            model.addAttribute("orderHasProducts", orderHasProduct);
-            return "orderHasProduct/getbyid";
-        }catch (EntityNotFoundException exception){
-            throw new ResourceNotFoundException("getby","id", id);
+            if (orderHasProduct == null) {
+                throw new ResourceNotFoundException("getby", "id", id);
+            }
+            return new ResponseEntity<>(orderHasProduct, HttpStatus.OK);
+        } catch (EntityNotFoundException exception) {
+            throw new ResourceNotFoundException("getby", "id", id);
         }
-
-
     }
 
-    @GetMapping ("/update/{id}")
-    public String updatePage (@PathVariable Long id, Model model){
-
-        try{
-           OrderHasProduct orderHasProduct = orderHasProductService.getOrderHasProductById(id);
-           model.addAttribute("orderHasProducts", orderHasProduct);
-           return "orderHasProduct/update";
-       }catch (EntityNotFoundException exception){
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> updateOrderHasProduct(@PathVariable Long id, @Valid @RequestBody OrderHasProductDTO orderHasProductDTO) {
+        try {
+            orderHasProductService.updateOrderHasProduct(orderHasProductDTO);
+            return new ResponseEntity<>("OrderHasProduct updated successfully", HttpStatus.OK);
+        } catch (EntityNotFoundException exception) {
             throw new ResourceNotFoundException("update", "id", id);
         }
-
-
-
-
     }
 
-    @PostMapping ("/update")
-    public String updateOrderHasProduct (@Valid @ModelAttribute("orderHasProducts") OrderHasProductDTO orderHasProductDTO){
-        orderHasProductService.updateOrderHasProduct(orderHasProductDTO);
-        return "redirect:/orderHasProduct/list";
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> delete(@PathVariable Long id) {
+        try {
+            OrderHasProduct orderHasProduct = orderHasProductService.getOrderHasProductById(id);
+            if (orderHasProduct == null) {
+                throw new ResourceNotFoundException("delete", "id", id);
+            }
+            orderHasProductService.delete(id);
+            return new ResponseEntity<>("OrderHasProduct deleted successfully", HttpStatus.OK);
+        } catch (EntityNotFoundException exception) {
+            throw new ResourceNotFoundException("delete", "id", id);
+        }
     }
-
-
-    @DeleteMapping ("/delete/{id}")
-
-    public RedirectView delete (@PathVariable Long id){
-        orderHasProductService.delete(id);
-        return new RedirectView("/orderHasProduct/list", true);
-
-    }
-
-
 }

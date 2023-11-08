@@ -25,8 +25,7 @@ public class ResourceNotFoundException extends RuntimeException {
 
     }
 
-//With super we tell it to extend the message to be printed from the inheritance, in this case it extends RuntimeException
-    // With String.format we put the message that will be shown next. With %s we format that value by resource name, tablefieldname and tablefield value
+
 
     public ResourceNotFoundException(String resourceName, String tableFieldName, Object tableFieldValue) {
         super(String.format("%s with %s= '%s' Not Found", resourceName, tableFieldName, tableFieldValue));

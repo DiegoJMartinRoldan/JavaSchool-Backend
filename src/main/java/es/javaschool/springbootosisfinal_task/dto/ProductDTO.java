@@ -44,4 +44,5 @@ public class ProductDTO {
     @Min(value = 0, message = "Stock quantity must be a positive value")
     private Integer quantityStock;
 
+
 }

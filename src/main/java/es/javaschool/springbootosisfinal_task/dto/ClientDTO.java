@@ -34,5 +34,10 @@ public class ClientDTO {
     @NotEmpty (message = "Password is required")
     private String password;
 
+    private String role;
 
+
+    public ClientDTO(Long id, String name, Long totalOrders) {
+
+    }
 }

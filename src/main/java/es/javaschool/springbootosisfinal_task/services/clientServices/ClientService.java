@@ -6,15 +6,20 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ClientService {
+public class ClientService{
 
 
     @Autowired
@@ -22,6 +27,9 @@ public class ClientService {
 
     @Autowired
     private final ClientMapper clientMapper;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 
 
@@ -35,6 +43,8 @@ public class ClientService {
 
 
     public void createClient(ClientDTO clientDTO) {
+        clientDTO.setPassword(passwordEncoder.encode(clientDTO.getPassword()));
+
         Client client = clientMapper.convertDtoToEntity(clientDTO);
         clientRepository.save(client);
 
@@ -53,6 +63,7 @@ public class ClientService {
         existing.setSurname(converted.getSurname());
         existing.setDateOfBirth(converted.getDateOfBirth());
         existing.setEmail(converted.getEmail());
+        existing.setPassword(converted.getPassword());
 
         clientRepository.save(existing);
 
@@ -61,6 +72,58 @@ public class ClientService {
     public void delete(Long id) {
         clientRepository.deleteById(id);
     }
+
+
+
+
+
+
+
+                             //Password Change
+
+    //We verify if the old password by comparing it with the new one that we receive from the method, are the same
+    public boolean oldPasswordIsValid(Client client, String oldPassword){
+        return passwordEncoder.matches(oldPassword, client.getPassword());
+
+    }
+
+
+    //Set the password of the entity with the new one
+    public void changePassword (@RequestBody Client client, String newPwd){
+        client.setPassword(passwordEncoder.encode(newPwd));
+        clientRepository.save(client);
+    }
+
+
+
+    //Statistics
+
+    public List<Client> getTopClients() {
+        List<Object[]> topClients = clientRepository.findTopClients();
+
+        List<Client> result = new ArrayList<>();
+        for (Object[] objects : topClients){
+            if (objects[0] instanceof Client){
+                Client client = (Client) objects[0];
+                result.add(client);
+            }
+        }
+        return result;
+    }
+
+    public String getClientRole(String name) {
+        Client client = clientRepository.findByName(name).orElseThrow(() -> new EntityNotFoundException("Client not found with name: " + name));
+        return client.getRole();
+    }
+
+
+    public Long getClientIdByName(String name) {
+        return clientRepository.findClientIdByName(name);
+    }
+
+
+
+
 
 
 
