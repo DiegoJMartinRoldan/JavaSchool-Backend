@@ -186,6 +186,20 @@ SELECT * FROM javaschool.refresh_token;
 -- "GROUP BY c " +
 -- "ORDER BY SUM(ohp.quantity) DESC
 
+-- SELECT SUM(p.price) as monthlyEarnings
+-- FROM javaschool.orders o
+-- JOIN javaschool.order_has_product ohp ON o.id = ohp.orders_id
+-- JOIN javaschool.product p ON ohp.product_id = p.id
+-- WHERE YEAR(o.order_date) = 2023
+-- AND MONTH(o.order_date) = 10;
+
+
+-- SELECT SUM(p.price) as weeklyEarnings
+-- FROM javaschool.orders o
+-- JOIN javaschool.order_has_product ohp ON o.id = ohp.orders_id
+-- JOIN javaschool.product p ON ohp.product_id = p.id
+-- WHERE YEARWEEK(o.order_date) = YEARWEEK(CURRENT_DATE());
+
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
