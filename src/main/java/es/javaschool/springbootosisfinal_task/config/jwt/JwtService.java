@@ -22,9 +22,9 @@ public class JwtService {
 
 
     //Generate a new token
-    public String generateTokenMethod(String name){
+    public String generateTokenMethod(String email){
         Map<String, Object> claims = new HashMap<>();
-        return createTokenMethod(claims,name);
+        return createTokenMethod(claims,email);
     }
 
     //Create a token with its predefined parameters
@@ -38,7 +38,7 @@ public class JwtService {
     }
 
     //Extract the name
-    public String extractClientName (String token){
+    public String extractClientEmail (String token){
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -73,8 +73,8 @@ public class JwtService {
 
     //Validate the token based on the extracted name
     public Boolean validateToken(String token, UserDetails userDetails){
-        final String name = extractClientName(token);
-        return (name.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        final String email = extractClientEmail(token);
+        return (email.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
     //Sign Secret key

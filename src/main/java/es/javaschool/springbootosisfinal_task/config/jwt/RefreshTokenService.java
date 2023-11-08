@@ -20,10 +20,10 @@ public class RefreshTokenService {
 
 
     // Method to create a new RefreshToken
-    public RefreshToken createTokenRefresh(String username){
+    public RefreshToken createTokenRefresh(String email){
 
         RefreshToken refreshToken = RefreshToken.builder()
-               .client(clientRepository.findByName(username).get())
+               .client(clientRepository.findByEmail(email).get())
                .token(UUID.randomUUID().toString())
                .expiration(Instant.now().plusMillis(600000))
                .build();

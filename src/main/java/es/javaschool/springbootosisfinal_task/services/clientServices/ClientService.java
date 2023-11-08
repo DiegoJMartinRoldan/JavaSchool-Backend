@@ -111,14 +111,14 @@ public class ClientService{
         return result;
     }
 
-    public String getClientRole(String name) {
-        Client client = clientRepository.findByName(name).orElseThrow(() -> new EntityNotFoundException("Client not found with name: " + name));
+    public String getClientRole(String email) {
+        Client client = clientRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Client not found with email: " + email));
         return client.getRole();
     }
 
 
-    public Long getClientIdByName(String name) {
-        return clientRepository.findClientIdByName(name);
+    public Long getClientIdByEmail(String email) {
+        return clientRepository.findClientIdByEmail(email);
     }
 
 

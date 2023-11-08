@@ -23,15 +23,15 @@ public class ClientUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<Client> client;
-        if (username.contains("@")){
+        if (username.contains("@")) {
             client = clientRepository.findByEmail(username);
-        }else{
-            client = clientRepository.findByName(username);
+        } else {
+            throw new UsernameNotFoundException("Invalid username format");
         }
 
         return client.map(ClientToUserDetails::new)
                 .orElseThrow(()-> new UsernameNotFoundException("User not found"));
-
-
     }
+
+
 }

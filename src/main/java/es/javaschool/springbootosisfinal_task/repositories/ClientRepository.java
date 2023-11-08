@@ -28,8 +28,9 @@ public interface ClientRepository extends JpaRepository<Client,Long> {
             "ORDER BY SUM(ohp.quantity) DESC")
     List<Object[]> findTopClients();
 
-    @Query("SELECT c.id FROM Client c WHERE c.name = :name")
-    Long findClientIdByName(@Param("name") String name);
+    @Query("SELECT c.id FROM Client c WHERE c.email = :email")
+    Long findClientIdByEmail(@Param("email") String email);
+
 
 
 

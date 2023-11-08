@@ -14,12 +14,12 @@ public class ClientToUserDetails implements UserDetails {
 
     // Spring Security Entity to UserDetails converter
 
-    private String name;
+    private String email;
     private String password;
     private List<GrantedAuthority> grantedAuthorityList;
 
     public ClientToUserDetails(Client client) {
-        name = client.getName();
+        email = client.getEmail();
         password = client.getPassword();
         grantedAuthorityList = Arrays.stream(client.getRole()
                         .split(","))
@@ -39,7 +39,7 @@ public class ClientToUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return name;
+        return email;
     }
 
     @Override

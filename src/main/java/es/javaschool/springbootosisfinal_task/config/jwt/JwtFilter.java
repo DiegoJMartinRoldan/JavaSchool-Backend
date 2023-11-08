@@ -41,17 +41,17 @@ public class JwtFilter extends OncePerRequestFilter {
         //Request authorization header
         String jwtHeader = request.getHeader("Authorization");
         String token = null;
-        String name = null;
+        String email = null;
 
         try {
             //If the header is not null and begins with "Bearer", the token is the header minus 7 characters and the name is extracted from the service
             if (jwtHeader != null && jwtHeader.startsWith("Bearer ")) {
                 token = jwtHeader.substring(7);
-                name = jwtService.extractClientName(token);
+                email = jwtService.extractClientEmail(token);
             }
             //If the name we extract is not null and does not have any authentication, we use clientUserDetailsService to load the user data
-            if (name != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = clientUserDetailsService.loadUserByUsername(name);
+            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = clientUserDetailsService.loadUserByUsername(email);
 
                 //Token is validated and authentication details are given
                 if (jwtService.validateToken(token, userDetails)) {

@@ -136,40 +136,36 @@ public class ClientController {
 
     @PostMapping("/login")
     public RefreshTokenDTO tokenAuthentication (@RequestBody ClientDTO clientDTO){
-
-       Authentication authentication =
-               authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(clientDTO.getName(), clientDTO.getPassword()));
-            if (authentication.isAuthenticated()){
-                RefreshToken refreshToken = refreshTokenService.createTokenRefresh(clientDTO.getName());
-               return RefreshTokenDTO.builder()
-                        .accessToken(jwtService.generateTokenMethod(clientDTO.getName()))
-                        .token(refreshToken.getToken())
-                        .role(clientService.getClientRole(clientDTO.getName()))
-                        .id(clientService.getClientIdByName(clientDTO.getName()))
-                        .build();
-            }else {
-                throw new UsernameNotFoundException("invalid request");
-            }
-
-
+        Authentication authentication =
+                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(clientDTO.getEmail(), clientDTO.getPassword()));
+        if (authentication.isAuthenticated()){
+            RefreshToken refreshToken = refreshTokenService.createTokenRefresh(clientDTO.getEmail());
+            return RefreshTokenDTO.builder()
+                    .accessToken(jwtService.generateTokenMethod(clientDTO.getEmail()))
+                    .token(refreshToken.getToken())
+                    .role(clientService.getClientRole(clientDTO.getEmail()))
+                    .id(clientService.getClientIdByEmail(clientDTO.getEmail()))
+                    .build();
+        }else {
+            throw new UsernameNotFoundException("invalid request");
+        }
     }
-
     //JWT Token Refresh
     @PostMapping("/refreshToken")
     public RefreshTokenDTO refreshToken(@RequestBody RefreshRequest refreshRequest){
 
         return refreshTokenService.findByToken(refreshRequest.getToken())
-            .map(refreshTokenService::verifyExpiration)
-            .map(RefreshToken::getClient)
-            .map(client -> {
-                String accessToken = jwtService.generateTokenMethod(client.getName());
-                return RefreshTokenDTO.builder()
-                        .accessToken(accessToken)
-                        .token(refreshRequest.getToken())
-                        .role(clientService.getClientRole(client.getName()))
-                        .id(clientService.getClientIdByName(client.getName()))
-                        .build();
-            }).orElseThrow(() -> new RuntimeException("Token is not in the database"));
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getClient)
+                .map(client -> {
+                    String accessToken = jwtService.generateTokenMethod(client.getEmail());
+                    return RefreshTokenDTO.builder()
+                            .accessToken(accessToken)
+                            .token(refreshRequest.getToken())
+                            .role(clientService.getClientRole(client.getEmail()))
+                            .id(clientService.getClientIdByEmail(client.getEmail()))
+                            .build();
+                }).orElseThrow(() -> new RuntimeException("Token is not in the database"));
 
     }
 
