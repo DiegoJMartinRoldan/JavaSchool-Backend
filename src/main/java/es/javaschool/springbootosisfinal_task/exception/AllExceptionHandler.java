@@ -17,13 +17,12 @@ import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
 import java.util.Map;
 
-//Customizing Exceptions
+
 @RestControllerAdvice
 public class AllExceptionHandler {
 
     //First 2 handmade exceptions, without ProblemDetail, we replace ProblemDetails with the ResponseByApi class
 
-    //@Valid
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handlerMethodArgumentNotValidException(MethodArgumentNotValidException exception, WebRequest webRequest){
 
@@ -42,7 +41,6 @@ public class AllExceptionHandler {
 
 
 
-    // Exception is thrown when a specific requested resource is not found on the server, Converts the default text that I have created in ResourceNotFoundException into a json and not into a text as it was configured
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ResponseByApi> handlerResourceNotFoundException(ResourceNotFoundException exception, WebRequest webRequest){
 
@@ -56,6 +54,10 @@ public class AllExceptionHandler {
 
 
 
+
+
+  @ExceptionHandler(BadRequestException.class)
+  public ResponseEntity<ResponseByApi> handlerBadRequestException(BadRequestException exception, WebRequest webRequest){
 
 
     //Spring Security Exceptions. Here we use ProblemDetails instead ResponseByApi class to manage exceptions
