@@ -73,6 +73,7 @@ public class ClientsAddressController {
     }
 
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<String> delete(@PathVariable Long id) {
         try {
             ClientsAddress clientsAddress = clientAddressService.getClientAddressById(id);

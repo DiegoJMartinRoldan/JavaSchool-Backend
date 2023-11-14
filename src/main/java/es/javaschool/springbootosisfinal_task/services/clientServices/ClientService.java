@@ -57,6 +57,7 @@ public class ClientService{
     }
 
     public void updateClient(ClientDTO clientDTO) {
+        clientDTO.setPassword(passwordEncoder.encode(clientDTO.getPassword()));
         Client existing = getClientById(clientDTO.getId());
         Client converted = clientMapper.convertDtoToEntity(clientDTO);
 
