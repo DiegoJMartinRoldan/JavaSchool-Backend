@@ -14,16 +14,14 @@ public interface OrdersRepository extends JpaRepository<Orders,Long> {
 
     List<Orders> findByClientName(String username);
 
-    @Query("SELECT SUM(p.price) as monthlyEarnings " +
+    @Query("SELECT SUM(p.price * ohp.quantity) as monthlyEarnings " +
             "FROM Orders o " +
             "JOIN OrderHasProduct ohp ON o.id = ohp.orders.id " +
             "JOIN Product p ON ohp.product.id = p.id " +
-            "WHERE YEAR(o.orderDate) = :year " +
-            "AND MONTH(o.orderDate) = :month")
+            "WHERE YEAR(o.orderDate) = :year AND MONTH(o.orderDate) = :month")
     Double getMonthlyEarnings(@Param("year") int year, @Param("month") int month);
 
-
-    @Query("SELECT SUM(p.price) as weeklyEarnings " +
+    @Query("SELECT SUM(p.price * ohp.quantity) as weeklyEarnings " +
             "FROM Orders o " +
             "JOIN OrderHasProduct ohp ON o.id = ohp.orders.id " +
             "JOIN Product p ON ohp.product.id = p.id " +

@@ -87,8 +87,9 @@ public class SpringSecurity{
                                          "/product/list",
                                          "/product/getby/{id}",
                                          "/client/login",
-                                         "/clientsAddress/getby/{id}",
-                                         "/client/refreshToken").permitAll()
+                                         "/client/refreshToken",
+                                         "/client/cart",
+                                         "/client/addToCart").permitAll()
                             .requestMatchers("/client/**",
                                              "/clientsAddress/**",
                                              "/orders/**",
@@ -154,7 +155,8 @@ public class SpringSecurity{
                 HttpMethod.GET.name(),
                 HttpMethod.POST.name(),
                 HttpMethod.PUT.name(),
-                HttpMethod.DELETE.name()
+                HttpMethod.DELETE.name(),
+                HttpMethod.PATCH.name()
         ));
         configuration.setMaxAge(4000L);
         urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", configuration);

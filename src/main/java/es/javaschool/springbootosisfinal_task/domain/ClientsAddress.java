@@ -14,7 +14,6 @@ import java.util.List;
 @ToString
 @Entity
 @Table(name = "clients_address")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class ClientsAddress {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

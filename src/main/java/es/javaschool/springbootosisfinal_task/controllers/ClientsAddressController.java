@@ -49,6 +49,7 @@ public class ClientsAddressController {
     }
 
     @GetMapping("/getby/{id}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<ClientsAddress> getClientAddressById(@PathVariable Long id) {
         try {
             ClientsAddress clientsAddress = clientAddressService.getClientAddressById(id);

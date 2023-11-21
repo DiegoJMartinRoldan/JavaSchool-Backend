@@ -12,7 +12,6 @@ import lombok.*;
 @ToString
 @Entity
 @Table(name = "order_has_product")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class OrderHasProduct {
 
     @Id

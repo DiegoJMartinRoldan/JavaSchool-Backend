@@ -57,7 +57,7 @@ public class ClientService{
     }
 
     public void updateClient(ClientDTO clientDTO) {
-        clientDTO.setPassword(passwordEncoder.encode(clientDTO.getPassword()));
+
         Client existing = getClientById(clientDTO.getId());
         Client converted = clientMapper.convertDtoToEntity(clientDTO);
 
@@ -65,7 +65,7 @@ public class ClientService{
         existing.setSurname(converted.getSurname());
         existing.setDateOfBirth(converted.getDateOfBirth());
         existing.setEmail(converted.getEmail());
-        existing.setPassword(converted.getPassword());
+
 
         clientRepository.save(existing);
 

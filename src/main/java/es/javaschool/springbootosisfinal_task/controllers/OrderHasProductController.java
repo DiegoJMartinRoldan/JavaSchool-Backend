@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +46,7 @@ public class OrderHasProductController {
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<String> createOrderHasProduct(@Valid @RequestBody OrderHasProductDTO orderHasProductDTO) {
 
        Long ordersId = orderHasProductDTO.getOrders().getId();

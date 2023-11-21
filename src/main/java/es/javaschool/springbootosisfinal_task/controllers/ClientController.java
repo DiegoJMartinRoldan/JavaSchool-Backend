@@ -29,10 +29,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 @RestController
@@ -103,7 +100,7 @@ public class ClientController {
 
     }
 
-    @PutMapping("/update/{id}")
+    @PatchMapping("/update/{id}")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<String> update(@PathVariable Long id, @Valid @RequestBody ClientDTO clientDTO) {
 
@@ -180,6 +177,7 @@ public class ClientController {
 
     //Método para cambiar la contraseña en el controlador, llamará al service con el método correspondiente para comprobar si la antigua contraseña coincide con la nueva
     @PostMapping("/changePassword")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     //Obtenemos como parámetros en este método la request que te piden para hacer la solicitud de cambio, que es el email, la contraseña y la nueva contraseña
     public String changePassword(@RequestBody ChangePasswordRequest changePasswordRequest){
 
@@ -223,12 +221,16 @@ public class ClientController {
     }
 
     @GetMapping("/cart")
-    public ResponseEntity<Map<Long, Product>> getShoppingCart(HttpSession session){
+    public ResponseEntity<List<Product>> getShoppingCart(HttpSession session){
         Map<Long, Product> content = (Map<Long, Product>) session.getAttribute("cartProductMap");
         if (content == null){
             throw new ResourceNotFoundException("cart");
         }
-        return new ResponseEntity<>(content, HttpStatus.OK);
+
+        // Obtener una lista de productos a partir de los valores del mapa
+        List<Product> productList = new ArrayList<>(content.values());
+
+        return new ResponseEntity<>(productList, HttpStatus.OK);
     }
 
 

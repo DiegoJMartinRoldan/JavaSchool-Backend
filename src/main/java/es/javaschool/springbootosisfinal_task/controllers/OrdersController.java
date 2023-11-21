@@ -119,6 +119,7 @@ public class OrdersController {
         Orders newOrder = new Orders();
         newOrder.setPaymentMethod(existingOrder.get().getPaymentMethod());
         newOrder.setOrderStatus(existingOrder.get().getOrderStatus());
+        newOrder.setOrderDate(existingOrder.get().getOrderDate());
         newOrder.setDeliveryMethod(existingOrder.get().getDeliveryMethod());
         newOrder.setPaymentStatus(existingOrder.get().getPaymentStatus());
         newOrder.setClient(existingOrder.get().getClient());
@@ -133,6 +134,7 @@ public class OrdersController {
 
 
     @GetMapping("/getby/{id}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<Orders> getOrderById(@PathVariable Long id) {
         try {
             Orders order = ordersService.getOrderById(id);
@@ -146,6 +148,7 @@ public class OrdersController {
     }
 
     @PutMapping("/update/{id}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<String> updateOrder(@PathVariable Long id, @Valid @RequestBody OrdersDTO ordersDTO) {
         try {
             ordersService.updateClient(ordersDTO);
@@ -170,6 +173,7 @@ public class OrdersController {
     }
 
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<String> delete(@PathVariable Long id) {
         try {
             Orders order = ordersService.getOrderById(id);

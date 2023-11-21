@@ -30,8 +30,6 @@ public class ClientDTO {
     @Email(message = "Email should be valid")
     private String email;
 
-    @Size(min = 5, max = 20, message = "Password must be between 5 and 20 characters")
-    @NotEmpty (message = "Password is required")
     private String password;
 
     private String role;
