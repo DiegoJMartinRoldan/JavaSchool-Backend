@@ -1,13 +1,19 @@
 package es.javaschool.springbootosisfinal_task.services.clientServices;
+import es.javaschool.springbootosisfinal_task.config.security.ClientToUserDetails;
 import es.javaschool.springbootosisfinal_task.domain.Client;
 import es.javaschool.springbootosisfinal_task.dto.ClientDTO;
 import es.javaschool.springbootosisfinal_task.repositories.ClientRepository;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static es.javaschool.springbootosisfinal_task.config.jwt.JwtService.SECRETKEY;
 
 @Service
 @Transactional
@@ -123,8 +131,15 @@ public class ClientService{
         return clientRepository.findClientIdByEmail(email);
     }
 
+    public Long getClientIdByName (String name){
+        return clientRepository.findClientByName(name);
+    }
+
 
     public Optional<Client> clientAlreadyExist(String email) {
         return clientRepository.findByEmailIgnoreCase(email);
     }
+
+
+
 }

@@ -1,10 +1,12 @@
 package es.javaschool.springbootosisfinal_task.controllers;
+import aj.org.objectweb.asm.TypeReference;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import es.javaschool.springbootosisfinal_task.config.security.ChangePasswordRequest;
-import es.javaschool.springbootosisfinal_task.domain.Client;
+import es.javaschool.springbootosisfinal_task.config.security.ClientToUserDetails;
+import es.javaschool.springbootosisfinal_task.domain.*;
 import es.javaschool.springbootosisfinal_task.config.jwt.RefreshToken;
-import es.javaschool.springbootosisfinal_task.domain.ClientsAddress;
-import es.javaschool.springbootosisfinal_task.domain.Orders;
-import es.javaschool.springbootosisfinal_task.domain.Product;
+import es.javaschool.springbootosisfinal_task.dto.CartProductDTO;
 import es.javaschool.springbootosisfinal_task.dto.ClientDTO;
 import es.javaschool.springbootosisfinal_task.config.jwt.RefreshRequest;
 import es.javaschool.springbootosisfinal_task.config.jwt.RefreshTokenDTO;
@@ -12,30 +14,46 @@ import es.javaschool.springbootosisfinal_task.dto.ProductDTO;
 import es.javaschool.springbootosisfinal_task.exception.ResourceNotFoundException;
 import es.javaschool.springbootosisfinal_task.config.jwt.RefreshTokenService;
 import es.javaschool.springbootosisfinal_task.repositories.ClientRepository;
+import es.javaschool.springbootosisfinal_task.repositories.OrderHasProductRepository;
+import es.javaschool.springbootosisfinal_task.repositories.OrdersRepository;
+import es.javaschool.springbootosisfinal_task.services.ShoppingCartService;
 import es.javaschool.springbootosisfinal_task.services.clientServices.ClientService;
 import es.javaschool.springbootosisfinal_task.config.jwt.JwtService;
+import es.javaschool.springbootosisfinal_task.services.orderHasProductServices.OrderHasProductService;
+import es.javaschool.springbootosisfinal_task.services.ordersServices.OrdersService;
 import es.javaschool.springbootosisfinal_task.services.productServices.ProductService;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.parameters.P;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
+import java.util.logging.Logger;
 
 
 @RestController
 @RequestMapping("${client.Controller.url}")
 public class ClientController {
-
+    private static final Logger logger = Logger.getLogger(ClientController.class.getName());
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(ShoppingCartService.class);
     @Autowired
     private ClientService clientService;
 
@@ -53,6 +71,21 @@ public class ClientController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private OrderHasProductService orderHasProductService;
+
+    @Autowired
+    private OrderHasProductRepository orderHasProductRepository;
+
+    @Autowired
+    private OrdersService ordersService;
+    @Autowired
+    private OrdersRepository ordersRepository;
+
+    @Autowired
+    private ShoppingCartService shoppingCartService;
+
 
 
     @GetMapping("/list")
@@ -135,7 +168,7 @@ public class ClientController {
 
 
 
-                                    //JWT
+    //JWT
 
     @PostMapping("/login")
     public RefreshTokenDTO tokenAuthentication (@RequestBody ClientDTO clientDTO){
@@ -173,104 +206,136 @@ public class ClientController {
     }
 
 
-                                //Change Password
+    //Change Password
 
-    //Método para cambiar la contraseña en el controlador, llamará al service con el método correspondiente para comprobar si la antigua contraseña coincide con la nueva
+
     @PostMapping("/changePassword")
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    //Obtenemos como parámetros en este método la request que te piden para hacer la solicitud de cambio, que es el email, la contraseña y la nueva contraseña
+
     public String changePassword(@RequestBody ChangePasswordRequest changePasswordRequest){
 
-        //Instanciamos cliente y decimos que cliente es igual a: llamamos al repositorio que nos busque por email y como tiene que decibir un parametro, recibe el que le hemos enviado en el request
         Client client = clientRepository.findByEmail(changePasswordRequest.getEmail()).get();
 
-        //Si el método de verificar la contraseña que recibe nua instancia de cliente y la contraseña de la request y las compara para ver si son la misma mediante el metodo OldPassword
-        //Si no es valido todos lo anterior:
         if (!clientService.oldPasswordIsValid(client, changePasswordRequest.getOldPwd())){
-           //Revisar esto con excepción personalizada
+            //Revisar esto con excepción personalizada
             return "Incorrect old password";
         }
-        //Si es valida la contraseña ejecuta el método changePassword para cambiar la contraseña
         clientService.changePassword(client, changePasswordRequest.getNewPwd());
         return "Password changed";
     }
 
-                                                 //Shopping Cart
+    //Shopping Cart
 
 
     @PostMapping("/addToCart")
-    public ResponseEntity<String> addToCart(@RequestBody ProductDTO productDTO, HttpSession session) {
+    @PreAuthorize("permitAll() or isAuthenticated()")
+    public ResponseEntity<String> addToCart(@RequestBody CartProductDTO cartProductDTO, HttpServletResponse response) {
+        shoppingCartService.addToCart(cartProductDTO, response);
 
-        // Get Product By id
-        Product product = productService.getProductById(productDTO.getId());
-        if (product == null) {
-            throw new RuntimeException("Product not available");
+        Long clientId = cartProductDTO.getClientId();
+        Long clientAddressId = cartProductDTO.getClientAddressId();
+
+        if (clientId != null && clientAddressId != null) {
+            return new ResponseEntity<>("Product added to cart successfully, authenticated", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Product added to cart successfully, not authenticated", HttpStatus.OK);
         }
-
-        // Map Product in a shopping cart or create a new shoping cart
-        Map<Long, Product> cartProductMap = (Map<Long, Product>) session.getAttribute("cartProductMap");
-        if (cartProductMap == null) {
-            cartProductMap = new HashMap<>();
-            session.setAttribute("cartProductMap", cartProductMap);
-        }
-
-        // Add product to the shopping cart
-        cartProductMap.put(product.getId(), product);
-
-        return new ResponseEntity<>("Product added to cart successfully", HttpStatus.OK);
     }
 
+
+
+
     @GetMapping("/cart")
-    public ResponseEntity<List<Product>> getShoppingCart(HttpSession session){
-        Map<Long, Product> content = (Map<Long, Product>) session.getAttribute("cartProductMap");
-        if (content == null){
-            throw new ResourceNotFoundException("cart");
+    @PreAuthorize("permitAll() or isAuthenticated()")
+    public ResponseEntity<List<Product>> getShoppingCart(HttpServletRequest request) {
+        Map<Long, Integer> cartProductMap = new HashMap<>();
+
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("cart")) {
+                    try {
+                        byte[] decodedBytes = Base64.getDecoder().decode(cookie.getValue());
+                        String decodedValue = new String(decodedBytes);
+
+                        Map<String, Object> tempMap = new ObjectMapper().readValue(decodedValue, Map.class);
+
+                        tempMap.forEach((key, value) -> cartProductMap.put(Long.parseLong(key), Integer.parseInt(value.toString())));
+                    } catch (JsonProcessingException | NumberFormatException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                }
+            }
         }
 
-        // Obtener una lista de productos a partir de los valores del mapa
-        List<Product> productList = new ArrayList<>(content.values());
+        if (cartProductMap.isEmpty()) {
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
+        }
+
+        // Response
+        List<Product> productList = new ArrayList<>();
+
+
+        for (Map.Entry<Long, Integer> entry : cartProductMap.entrySet()) {
+            Long productId = entry.getKey();
+            Integer quantity = entry.getValue();
+
+            Product product = productService.getProductById(productId);
+
+
+            productList.add(product);
+        }
 
         return new ResponseEntity<>(productList, HttpStatus.OK);
     }
 
 
+
+
+
+
+
+
+
     //Checkout
 
- // @PostMapping("/checkout")
- // @PreAuthorize("hasAuthority('ROLE_USER')")
- // public ResponseEntity<String> checkout(HttpSession session, @RequestBody ClientsAddress clientAddress) {
- //
- //     Map<Long, Product> cartProductMap = (Map<Long, Product>) session.getAttribute("cartProductMap");
- //
- //     Orders newOrder = new Orders();
- //
- //     ordersService.createOrder(newOrder);
+    // @PostMapping("/checkout")
+    // @PreAuthorize("hasAuthority('ROLE_USER')")
+    // public ResponseEntity<String> checkout(HttpSession session, @RequestBody ClientsAddress clientAddress) {
+    //
+    //     Map<Long, Product> cartProductMap = (Map<Long, Product>) session.getAttribute("cartProductMap");
+    //
+    //     Orders newOrder = new Orders();
+    //
+    //     ordersService.createOrder(newOrder);
 //
- //
- //     session.removeAttribute("cartProductMap");
+    //
+    //     session.removeAttribute("cartProductMap");
 //
- //     return new ResponseEntity<>("Order placed successfully", HttpStatus.OK);
- // }
+    //     return new ResponseEntity<>("Order placed successfully", HttpStatus.OK);
+    // }
 //
- // @PostMapping("/checkout")
- // @PreAuthorize("hasAuthority('ROLE_USER')")
- // public ResponseEntity<String> checkout(HttpSession session, @RequestBody ClientAddress clientAddress) {
- //
- //     Map<Long, Product> cartProductMap = (Map<Long, Product>) session.getAttribute("cartProductMap");
- //
- //     Order newOrder = new Order();
- //     newOrder.setClient(clientService.getCurrentClient());
- //     newOrder.setClientAddress(clientAddress);
- //     List<OrderHasProduct> orderItems = new ArrayList<>();
- //     for (Map.Entry<Long, Product> entry : cartProductMap.entrySet()) {
- //         Product product = entry.getValue();
- //     }
- //     newOrder.setOrderItems(orderItems);
- //
- //     session.removeAttribute("cartProductMap");
+    // @PostMapping("/checkout")
+    // @PreAuthorize("hasAuthority('ROLE_USER')")
+    // public ResponseEntity<String> checkout(HttpSession session, @RequestBody ClientAddress clientAddress) {
+    //
+    //     Map<Long, Product> cartProductMap = (Map<Long, Product>) session.getAttribute("cartProductMap");
+    //
+    //     Order newOrder = new Order();
+    //     newOrder.setClient(clientService.getCurrentClient());
+    //     newOrder.setClientAddress(clientAddress);
+    //     List<OrderHasProduct> orderItems = new ArrayList<>();
+    //     for (Map.Entry<Long, Product> entry : cartProductMap.entrySet()) {
+    //         Product product = entry.getValue();
+    //     }
+    //     newOrder.setOrderItems(orderItems);
+    //
+    //     session.removeAttribute("cartProductMap");
 //
- //     return new ResponseEntity<>("Order placed successfully", HttpStatus.OK);
- // }
+    //     return new ResponseEntity<>("Order placed successfully", HttpStatus.OK);
+    // }
 //
 
 }

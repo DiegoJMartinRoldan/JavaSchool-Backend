@@ -3,7 +3,9 @@ import es.javaschool.springbootosisfinal_task.domain.Client;
 import es.javaschool.springbootosisfinal_task.domain.Orders;
 import es.javaschool.springbootosisfinal_task.dto.ClientDTO;
 import es.javaschool.springbootosisfinal_task.dto.OrdersDTO;
+import es.javaschool.springbootosisfinal_task.repositories.ClientRepository;
 import es.javaschool.springbootosisfinal_task.repositories.OrdersRepository;
+import es.javaschool.springbootosisfinal_task.services.clientServices.ClientService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.awt.print.Pageable;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,7 +32,11 @@ public class OrdersService {
 
     @Autowired
     private OrdersMapper ordersMapper;
+    @Autowired
+    private ClientRepository clientRepository;
 
+    @Autowired
+    private ClientService clientService;
 
 
     public List<OrdersDTO> listAll() {  // ADMIN Method
@@ -50,9 +57,10 @@ public class OrdersService {
     //-----------------------
 
 
-    public void createOrder(OrdersDTO ordersDTO) {
+    public Orders createOrder(OrdersDTO ordersDTO) {
         Orders order = ordersMapper.convertDtoToEntity(ordersDTO);
-        ordersRepository.save(order);
+        Orders savedOrder = ordersRepository.save(order);
+        return savedOrder;
     }
 
     //---------
@@ -108,4 +116,14 @@ public class OrdersService {
       public Double calculateWeeklyRevenue() {
           return ordersRepository.calculateWeeklyEarnings();
       }
+
+
+
+
+
+
+
+
+
+
 }

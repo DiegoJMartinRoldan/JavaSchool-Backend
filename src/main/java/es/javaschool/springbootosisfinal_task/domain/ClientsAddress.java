@@ -1,5 +1,6 @@
 package es.javaschool.springbootosisfinal_task.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
@@ -38,6 +39,7 @@ public class ClientsAddress {
     private String apartment;
 
     @OneToMany(mappedBy = "clientsAddress", cascade = CascadeType.ALL)
+    @JsonBackReference
     private List<Orders> orders;
 
     @ManyToOne
