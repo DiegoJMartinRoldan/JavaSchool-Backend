@@ -1,6 +1,8 @@
 package es.javaschool.springbootosisfinal_task.services.orderHasProductServices;
 import es.javaschool.springbootosisfinal_task.domain.OrderHasProduct;
+import es.javaschool.springbootosisfinal_task.domain.Product;
 import es.javaschool.springbootosisfinal_task.dto.OrderHasProductDTO;
+import es.javaschool.springbootosisfinal_task.dto.ProductDTO;
 import es.javaschool.springbootosisfinal_task.repositories.OrderHasProductRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -59,4 +61,7 @@ public class OrderHasProductService {
     public void delete(Long id) {
         orderHasProductRepository.deleteById(id);
     }
+
+
+
 }

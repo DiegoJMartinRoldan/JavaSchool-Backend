@@ -11,6 +11,7 @@ import es.javaschool.springbootosisfinal_task.dto.ClientDTO;
 import es.javaschool.springbootosisfinal_task.config.jwt.RefreshRequest;
 import es.javaschool.springbootosisfinal_task.config.jwt.RefreshTokenDTO;
 import es.javaschool.springbootosisfinal_task.dto.ProductDTO;
+import es.javaschool.springbootosisfinal_task.dto.ProductQuantityDto;
 import es.javaschool.springbootosisfinal_task.exception.ResourceNotFoundException;
 import es.javaschool.springbootosisfinal_task.config.jwt.RefreshTokenService;
 import es.javaschool.springbootosisfinal_task.repositories.ClientRepository;
@@ -247,7 +248,7 @@ public class ClientController {
 
     @GetMapping("/cart")
     @PreAuthorize("permitAll() or isAuthenticated()")
-    public ResponseEntity<List<Product>> getShoppingCart(HttpServletRequest request) {
+    public ResponseEntity<List<ProductQuantityDto>> getShoppingCart(HttpServletRequest request, Authentication authentication) {
         Map<Long, Integer> cartProductMap = new HashMap<>();
 
         Cookie[] cookies = request.getCookies();
@@ -270,26 +271,37 @@ public class ClientController {
             }
         }
 
-        if (cartProductMap.isEmpty()) {
-            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
-        }
+        List<ProductQuantityDto> productList = new ArrayList<>();
 
-        // Response
-        List<Product> productList = new ArrayList<>();
-
-
+        // Manejar productos no autenticados
         for (Map.Entry<Long, Integer> entry : cartProductMap.entrySet()) {
             Long productId = entry.getKey();
             Integer quantity = entry.getValue();
 
-            Product product = productService.getProductById(productId);
+            ProductDTO productDTO = productService.getProductDTOById(productId);
 
-
-            productList.add(product);
+            // Añadir producto y cantidad a la lista
+            if (productDTO != null) {
+                productList.add(new ProductQuantityDto(productDTO, quantity));
+            }
         }
 
+        // Manejar productos autenticados
+        if (authentication != null && authentication.isAuthenticated()) {
+            String clientEmail = ((ClientToUserDetails) authentication.getPrincipal()).getUsername();
+            Long clientId = clientService.getClientIdByEmail(clientEmail);
+
+            List<ProductQuantityDto> productQuantities = shoppingCartService.getProductsWithQuantities(clientId);
+
+            // Agregar productos autenticados a la lista
+            productList.addAll(productQuantities);
+        }
+
+        // Devolver la respuesta con la lista de productos
         return new ResponseEntity<>(productList, HttpStatus.OK);
     }
+
+
 
 
 

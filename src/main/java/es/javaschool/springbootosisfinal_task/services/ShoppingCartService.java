@@ -8,10 +8,13 @@ import es.javaschool.springbootosisfinal_task.domain.Product;
 import es.javaschool.springbootosisfinal_task.dto.CartProductDTO;
 import es.javaschool.springbootosisfinal_task.dto.OrdersDTO;
 import es.javaschool.springbootosisfinal_task.dto.ProductDTO;
+import es.javaschool.springbootosisfinal_task.dto.ProductQuantityDto;
 import es.javaschool.springbootosisfinal_task.repositories.OrderHasProductRepository;
 import es.javaschool.springbootosisfinal_task.services.clientAddresServices.ClientAddressService;
 import es.javaschool.springbootosisfinal_task.services.clientServices.ClientService;
+import es.javaschool.springbootosisfinal_task.services.orderHasProductServices.OrderHasProductService;
 import es.javaschool.springbootosisfinal_task.services.ordersServices.OrdersService;
+import es.javaschool.springbootosisfinal_task.services.productServices.ProductMapper;
 import es.javaschool.springbootosisfinal_task.services.productServices.ProductService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ShoppingCartService {
@@ -42,6 +46,12 @@ public class ShoppingCartService {
 
     @Autowired
     private ClientAddressService clientAddressService;
+
+    @Autowired
+    private OrderHasProductService orderHasProductService;
+
+    @Autowired
+    private ProductMapper productMapper;
 
     // Add to cart for authenticated and no authenticated users
     public void addToCart(CartProductDTO cartProductDTO, HttpServletResponse response) {
@@ -126,21 +136,20 @@ public class ShoppingCartService {
         log.info("Cookie added. CookieName: {}, CookieValue: {}", cartCookie.getName(), cartCookie.getValue());
     }
 
-   // public List<CartProductDTO> getShoppingCart(Long clientId) {
-   //
-   //     List<OrderHasProduct> cartProducts = orderHasProductRepository.findByOrders_Client_IdAndOrders_OrderStatus(clientId, "PENDING");
-//
-   //     // Mapear a DTO para la respuesta
-   //     List<CartProductDTO> cartProductDTOList = new ArrayList<>();
-   //     for (OrderHasProduct cartProduct : cartProducts) {
-   //         CartProductDTO cartProductDTO = new CartProductDTO();
-   //         cartProductDTO.setProducts(cartProduct.getProduct());
-   //         cartProductDTO.setQuantities(cartProduct.getQuantity());
-   //         cartProductDTOList.add(cartProductDTO);
-   //     }
-//
-   //     return cartProductDTOList;
-   // }
+
+    public List<ProductQuantityDto> getProductsWithQuantities(Long clientId) {
+        List<OrderHasProduct> orderHasProducts = orderHasProductRepository.findOrderHasProductsByClientId(clientId);
+
+        return orderHasProducts.stream()
+                .map(orderHasProduct -> {
+                    ProductDTO productDTO = productMapper.convertEntityToDto(orderHasProduct.getProduct());
+                    int quantity = orderHasProduct.getQuantity(); // Asegúrate de tener este método en tu entidad OrderHasProduct
+                    return new ProductQuantityDto(productDTO, quantity);
+                })
+                .collect(Collectors.toList());
+    }
+
+
 
 
 
