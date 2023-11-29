@@ -1,4 +1,5 @@
 package es.javaschool.springbootosisfinal_task.repositories;
+import es.javaschool.springbootosisfinal_task.domain.Client;
 import es.javaschool.springbootosisfinal_task.domain.Orders;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface OrdersRepository extends JpaRepository<Orders,Long> {
@@ -28,6 +30,7 @@ public interface OrdersRepository extends JpaRepository<Orders,Long> {
             "WHERE YEARWEEK(o.orderDate) = YEARWEEK(CURRENT_DATE())")
     Double calculateWeeklyEarnings();
 
-
+    @Query("SELECT o FROM Orders o WHERE o.client = :client AND o.orderStatus = :orderStatus")
+    Optional<Orders> findByClientAndOrderStatus(@Param("client") Client client, @Param("orderStatus") String orderStatus);
 
 }

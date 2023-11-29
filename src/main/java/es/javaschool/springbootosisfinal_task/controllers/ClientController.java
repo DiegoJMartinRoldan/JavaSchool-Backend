@@ -225,9 +225,7 @@ public class ClientController {
         return "Password changed";
     }
 
-    //Shopping Cart
-
-
+                                                    //Add Products - Shopping Cart
     @PostMapping("/addToCart")
     @PreAuthorize("permitAll() or isAuthenticated()")
     public ResponseEntity<String> addToCart(@RequestBody CartProductDTO cartProductDTO, HttpServletResponse response) {
@@ -245,12 +243,14 @@ public class ClientController {
 
 
 
-
+                                                        //View Shopping Cart
     @GetMapping("/cart")
     @PreAuthorize("permitAll() or isAuthenticated()")
     public ResponseEntity<List<ProductQuantityDto>> getShoppingCart(HttpServletRequest request, Authentication authentication) {
         Map<Long, Integer> cartProductMap = new HashMap<>();
 
+
+        // Not Auth
         Cookie[] cookies = request.getCookies();
 
         if (cookies != null) {
@@ -273,31 +273,31 @@ public class ClientController {
 
         List<ProductQuantityDto> productList = new ArrayList<>();
 
-        // Manejar productos no autenticados
+
         for (Map.Entry<Long, Integer> entry : cartProductMap.entrySet()) {
             Long productId = entry.getKey();
             Integer quantity = entry.getValue();
 
             ProductDTO productDTO = productService.getProductDTOById(productId);
 
-            // Añadir producto y cantidad a la lista
+
             if (productDTO != null) {
                 productList.add(new ProductQuantityDto(productDTO, quantity));
             }
         }
 
-        // Manejar productos autenticados
+        // Auth Products
         if (authentication != null && authentication.isAuthenticated()) {
             String clientEmail = ((ClientToUserDetails) authentication.getPrincipal()).getUsername();
             Long clientId = clientService.getClientIdByEmail(clientEmail);
 
             List<ProductQuantityDto> productQuantities = shoppingCartService.getProductsWithQuantities(clientId);
 
-            // Agregar productos autenticados a la lista
+
             productList.addAll(productQuantities);
         }
 
-        // Devolver la respuesta con la lista de productos
+
         return new ResponseEntity<>(productList, HttpStatus.OK);
     }
 

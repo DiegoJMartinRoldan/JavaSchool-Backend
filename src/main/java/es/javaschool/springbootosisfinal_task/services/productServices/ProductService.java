@@ -117,7 +117,7 @@ private ProductMapper productMapper;
     }
 
 
-    //Top 10 productos
+    //Top 10 products
     public List<Product> getTop10ProductsSold() {
         Pageable top10Products = PageRequest.of(0, 10);
         List<Object[]> topProducts = productRepository.findTopProducts(top10Products);

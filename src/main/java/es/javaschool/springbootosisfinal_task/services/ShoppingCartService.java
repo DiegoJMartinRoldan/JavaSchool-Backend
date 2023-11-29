@@ -10,6 +10,7 @@ import es.javaschool.springbootosisfinal_task.dto.OrdersDTO;
 import es.javaschool.springbootosisfinal_task.dto.ProductDTO;
 import es.javaschool.springbootosisfinal_task.dto.ProductQuantityDto;
 import es.javaschool.springbootosisfinal_task.repositories.OrderHasProductRepository;
+import es.javaschool.springbootosisfinal_task.repositories.OrdersRepository;
 import es.javaschool.springbootosisfinal_task.services.clientAddresServices.ClientAddressService;
 import es.javaschool.springbootosisfinal_task.services.clientServices.ClientService;
 import es.javaschool.springbootosisfinal_task.services.orderHasProductServices.OrderHasProductService;
@@ -47,11 +48,12 @@ public class ShoppingCartService {
     @Autowired
     private ClientAddressService clientAddressService;
 
-    @Autowired
-    private OrderHasProductService orderHasProductService;
 
     @Autowired
     private ProductMapper productMapper;
+
+    @Autowired
+    private OrdersRepository ordersRepository;
 
     // Add to cart for authenticated and no authenticated users
     public void addToCart(CartProductDTO cartProductDTO, HttpServletResponse response) {
@@ -59,12 +61,12 @@ public class ShoppingCartService {
         Long clientAddressId = cartProductDTO.getClientAddressId();
 
         if (clientId != null && clientAddressId != null) {
-            // Usuario autenticado
+            // Authenticated
             log.info("Authenticated user. ClientId: {} ", clientId);
             log.info("Authenticated user. ClientAddressId: {} ", clientAddressId);
             handleAuthenticatedUser(clientId, clientAddressId, cartProductDTO);
         } else {
-            // Usuario no autenticado
+            // Not Authenticated
             log.info("Unauthenticated user.");
             handleUnAuthenticatedUser(cartProductDTO, response);
         }
@@ -74,22 +76,29 @@ public class ShoppingCartService {
 
     // Authenticated
     private void handleAuthenticatedUser(Long clientId, Long clientAddressId, CartProductDTO cartProductDTO) {
+        // Search current orders
+        Client client = clientService.getClientById(clientId);
+        Optional<Orders> pendingOrder = ordersRepository.findByClientAndOrderStatus(client, "PENDING");
 
-        OrdersDTO ordersDTO = new OrdersDTO();
+        if (pendingOrder.isPresent()) {
+            // Use current order
+            connectProductToOrders(pendingOrder.get(), cartProductDTO.getProducts(), cartProductDTO.getQuantities());
+        } else {
+            // Create new order
+            OrdersDTO ordersDTO = new OrdersDTO();
+            ordersDTO.setClient(client);
+            ordersDTO.setClientsAddress(clientAddressService.getClientAddressById(clientAddressId));
+            ordersDTO.setOrderStatus("PENDING");
 
-        ordersDTO.setClient(clientService.getClientById(clientId));
-        ordersDTO.setClientsAddress(clientAddressService.getClientAddressById(clientAddressId));
-        ordersDTO.setOrderStatus("PENDING");
+            Date currentDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+            ordersDTO.setOrderDate(currentDate);
 
-        Date currentDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
-        ordersDTO.setOrderDate(currentDate);
-
-
-        Orders newOrder = ordersService.createOrder(ordersDTO);
-
-
-       connectProductToOrders(newOrder, cartProductDTO.getProducts(), cartProductDTO.getQuantities());
+            Orders newOrder = ordersService.createOrder(ordersDTO);
+            connectProductToOrders(newOrder, cartProductDTO.getProducts(), cartProductDTO.getQuantities());
+        }
     }
+
+
 
     //Not authenticated
     private void handleUnAuthenticatedUser(CartProductDTO cartProductDTO, HttpServletResponse httpServletResponse) {
@@ -137,13 +146,14 @@ public class ShoppingCartService {
     }
 
 
+    // Get Products + Quantities
     public List<ProductQuantityDto> getProductsWithQuantities(Long clientId) {
         List<OrderHasProduct> orderHasProducts = orderHasProductRepository.findOrderHasProductsByClientId(clientId);
 
         return orderHasProducts.stream()
                 .map(orderHasProduct -> {
                     ProductDTO productDTO = productMapper.convertEntityToDto(orderHasProduct.getProduct());
-                    int quantity = orderHasProduct.getQuantity(); // Asegúrate de tener este método en tu entidad OrderHasProduct
+                    int quantity = orderHasProduct.getQuantity();
                     return new ProductQuantityDto(productDTO, quantity);
                 })
                 .collect(Collectors.toList());
