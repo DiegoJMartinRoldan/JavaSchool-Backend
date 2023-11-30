@@ -18,6 +18,7 @@ import es.javaschool.springbootosisfinal_task.services.ordersServices.OrdersServ
 import es.javaschool.springbootosisfinal_task.services.productServices.ProductMapper;
 import es.javaschool.springbootosisfinal_task.services.productServices.ProductService;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,12 +49,16 @@ public class ShoppingCartService {
     @Autowired
     private ClientAddressService clientAddressService;
 
-
     @Autowired
     private ProductMapper productMapper;
 
     @Autowired
     private OrdersRepository ordersRepository;
+
+    @Autowired
+    private HttpServletRequest request;
+
+
 
     // Add to cart for authenticated and no authenticated users
     public void addToCart(CartProductDTO cartProductDTO, HttpServletResponse response) {
@@ -100,12 +105,16 @@ public class ShoppingCartService {
 
 
 
+
     //Not authenticated
     private void handleUnAuthenticatedUser(CartProductDTO cartProductDTO, HttpServletResponse httpServletResponse) {
-        connectProductToCookie(cartProductDTO, httpServletResponse);
+        connectProductToCookie(cartProductDTO, httpServletResponse, request);
     }
 
-    // Product - Order
+
+
+
+    // Product - Order (create orderHasProduct)
      private void connectProductToOrders(Orders orders, List<ProductDTO> productDTOList, List<Integer> quantities) {
          for (int i = 0; i < productDTOList.size(); i++) {
              ProductDTO productDTO = productDTOList.get(i);
@@ -120,10 +129,33 @@ public class ShoppingCartService {
          }
      }
 
-    // Cookie management
-    private void connectProductToCookie(CartProductDTO cartProductDTO, HttpServletResponse httpServletResponse) {
+
+
+    // Cookies
+    private void connectProductToCookie(CartProductDTO cartProductDTO, HttpServletResponse httpServletResponse, HttpServletRequest httpServletRequest) {
         Map<Long, Integer> productQuantityMap = new HashMap<>();
 
+        // Existing cookie
+        Cookie[] cookies = httpServletRequest.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("cart")) {
+                    try {
+                        byte[] decodedBytes = Base64.getDecoder().decode(cookie.getValue());
+                        String decodedValue = new String(decodedBytes);
+
+                        Map<String, Object> existingMap = new ObjectMapper().readValue(decodedValue, Map.class);
+
+                        existingMap.forEach((key, value) -> productQuantityMap.put(Long.parseLong(key), Integer.parseInt(value.toString())));
+                    } catch (JsonProcessingException | NumberFormatException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                }
+            }
+        }
+
+        // Add Products
         for (int i = 0; i < cartProductDTO.getProducts().size(); i++) {
             ProductDTO productDTO = cartProductDTO.getProducts().get(i);
             Integer quantity = cartProductDTO.getQuantities().get(i);
@@ -132,8 +164,8 @@ public class ShoppingCartService {
             productQuantityMap.put(product.getId(), quantity);
         }
 
+        // Update cookie adding new products to the shopping cart
         Cookie cartCookie = new Cookie("cart", "");
-
         try {
             String base64Value = Base64.getEncoder().encodeToString(new ObjectMapper().writeValueAsBytes(productQuantityMap));
             cartCookie.setValue(base64Value);
@@ -141,9 +173,12 @@ public class ShoppingCartService {
             e.printStackTrace();
         }
 
+        // Set update cookie
         httpServletResponse.addCookie(cartCookie);
         log.info("Cookie added. CookieName: {}, CookieValue: {}", cartCookie.getName(), cartCookie.getValue());
     }
+
+
 
 
     // Get Products + Quantities
@@ -158,14 +193,5 @@ public class ShoppingCartService {
                 })
                 .collect(Collectors.toList());
     }
-
-
-
-
-
-
-
-
-
 
 }
