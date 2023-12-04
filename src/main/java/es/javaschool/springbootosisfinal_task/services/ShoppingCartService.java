@@ -94,6 +94,7 @@ public class ShoppingCartService {
             ordersDTO.setClient(client);
             ordersDTO.setClientsAddress(clientAddressService.getClientAddressById(clientAddressId));
             ordersDTO.setOrderStatus("PENDING");
+            ordersDTO.setPaymentStatus("PENDING");
 
             Date currentDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
             ordersDTO.setOrderDate(currentDate);
@@ -166,6 +167,8 @@ public class ShoppingCartService {
 
         // Update cookie adding new products to the shopping cart
         Cookie cartCookie = new Cookie("cart", "");
+        cartCookie.setMaxAge(24 * 60 * 60);
+
         try {
             String base64Value = Base64.getEncoder().encodeToString(new ObjectMapper().writeValueAsBytes(productQuantityMap));
             cartCookie.setValue(base64Value);

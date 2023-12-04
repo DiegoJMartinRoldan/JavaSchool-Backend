@@ -226,6 +226,7 @@ public class ClientController {
     }
 
                                                     //Add Products - Shopping Cart
+
     @PostMapping("/addToCart")
     @PreAuthorize("permitAll() or isAuthenticated()")
     public ResponseEntity<String> addToCart(@RequestBody CartProductDTO cartProductDTO, HttpServletResponse response) {
@@ -243,7 +244,7 @@ public class ClientController {
 
 
 
-                                                        //View Shopping Cart
+    //View Shopping Cart
     @GetMapping("/cart")
     @PreAuthorize("permitAll() or isAuthenticated()")
     public ResponseEntity<List<ProductQuantityDto>> getShoppingCart(HttpServletRequest request, Authentication authentication) {
@@ -300,8 +301,6 @@ public class ClientController {
 
         return new ResponseEntity<>(productList, HttpStatus.OK);
     }
-
-
 
 
 

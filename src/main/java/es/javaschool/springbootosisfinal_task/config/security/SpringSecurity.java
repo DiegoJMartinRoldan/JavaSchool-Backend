@@ -79,8 +79,6 @@ public class SpringSecurity{
                                          "/client/update/{id}",
                                          "/client/getby/{id}",
                                          "/client/delete/{id}",
-                                         "/client/login",
-                                         "/client/refreshToken",
                                          "/client/changePassword",
                                          "/client/addToCart",
                                          "/client/cart",
