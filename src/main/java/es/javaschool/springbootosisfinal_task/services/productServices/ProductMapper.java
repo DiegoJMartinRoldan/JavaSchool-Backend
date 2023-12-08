@@ -20,7 +20,7 @@ public class ProductMapper {
         productDTO.setWeight(product.getWeight());
         productDTO.setVolume(product.getVolume());
         productDTO.setQuantityStock(product.getQuantityStock());
-
+        productDTO.setImage(product.getImage());
 
 
         return productDTO;
@@ -39,6 +39,8 @@ public class ProductMapper {
         product.setWeight(productDTO.getWeight());
         product.setVolume(productDTO.getVolume());
         product.setQuantityStock(productDTO.getQuantityStock());
+        product.setImage(productDTO.getImage());
+
 
         return product;
 

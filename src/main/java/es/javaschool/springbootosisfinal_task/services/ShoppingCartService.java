@@ -96,10 +96,12 @@ public class ShoppingCartService {
             ordersDTO.setOrderStatus("PENDING");
             ordersDTO.setPaymentStatus("PENDING");
 
+
             Date currentDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
             ordersDTO.setOrderDate(currentDate);
 
             Orders newOrder = ordersService.createOrder(ordersDTO);
+
             connectProductToOrders(newOrder, cartProductDTO.getProducts(), cartProductDTO.getQuantities());
         }
     }

@@ -1,27 +1,24 @@
 package es.javaschool.springbootosisfinal_task.services.productServices;
 import es.javaschool.springbootosisfinal_task.domain.Product;
 import es.javaschool.springbootosisfinal_task.dto.ProductDTO;
-import es.javaschool.springbootosisfinal_task.repositories.OrderHasProductRepository;
 import es.javaschool.springbootosisfinal_task.repositories.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 
 @Service
 @Transactional
@@ -34,8 +31,6 @@ private ProductRepository productRepository;
 
 @Autowired
 private ProductMapper productMapper;
-    @Autowired
-    private OrderHasProductRepository orderHasProductRepository;
 
 
     public List<ProductDTO> listAll() {
@@ -47,15 +42,36 @@ private ProductMapper productMapper;
     }
 
 
+    @Transactional
     public void createProduct(ProductDTO productDTO) {
         Product product = productMapper.convertDtoToEntity(productDTO);
+
+        // Guardar el archivo
+        saveFile(productDTO.getImage(), product.getId());
+        System.out.println(productDTO.getImage());
         productRepository.save(product);
 
     }
 
+    public void saveFile(byte[] image, Long productId) {
+        try {
+            // Obtener el nombre del archivo
+            String fileName = productId + "_" + System.currentTimeMillis() + ".jpg";
+
+            // Obtener la ruta del archivo
+            String filePath = "uploads/" + fileName;
+
+            // Guardar el archivo en la carpeta "uploads"
+            Files.write(Paths.get(filePath), image);
+        } catch (IOException e) {
+            throw new RuntimeException("Error al guardar el archivo");
+        }
+    }
+
+
     public Product getProductById(Long id) {
         return productRepository
-                .findById(id).orElseThrow(() -> new EntityNotFoundException("Client not found with id: " + id));
+                .findById(id).orElseThrow(() -> new EntityNotFoundException("Product not found with id: " + id));
     }
 
 
@@ -71,11 +87,11 @@ private ProductMapper productMapper;
         existing.setWeight(converted.getWeight());
         existing.setVolume(converted.getVolume());
         existing.setQuantityStock(converted.getQuantityStock());
-
+        existing.setImage(converted.getImage());
 
         productRepository.save(existing);
-
     }
+
 
     public void delete(Long id) {
         productRepository.deleteById(id);
@@ -95,11 +111,11 @@ private ProductMapper productMapper;
         if (category != null){
             productStream = productStream.filter(product -> category.equals(product.getCategory()));
         }
-        //Incluye productos cuyo precio sea igual o menor al precio proporcionado
+
         if (price != null) {
             productStream = productStream.filter(product -> price.compareTo(product.getPrice()) <= 0);
         }
-        //Si el nombre del producto coincide con lo que se está buscando arroja esto
+
         if (title != null) {
             productStream = productStream.filter(product -> title.equals(product.getTitle()));
         }
@@ -138,10 +154,6 @@ private ProductMapper productMapper;
 
         return productMapper.convertEntityToDto(product);
     }
-
-
-
-
 
 
 }

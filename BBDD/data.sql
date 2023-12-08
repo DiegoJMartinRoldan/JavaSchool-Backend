@@ -153,11 +153,11 @@ VALUES
 	('Credit Card', 'Express Shipping', 'Paid', 'Processing', '1995-07-10', 1, 2);
 
 
-INSERT INTO `javaschool`.`product` (`title`, `price`, `category`, `parameters`, `weight`, `volume`, `quantity_stock`)
+INSERT INTO `javaschool`.`product` (`title`, `price`, `category`, `parameters`, `weight`, `volume`, `quantity_stock`, `image`)
 VALUES
-    ('MIDI Piano', 200, 'Musical Instruments', 'Type: MIDI, Color: Silver', 15, 0, 5),
-    ('Modern Desk Lamp', 50, 'Home & Living', 'Power Source: Electric', 1, 0, 20),
-    ('Rolex', 10000, 'Fashion', 'Material: Stainless Steel', 0, 0, 10);
+    ('MIDI Piano', 200, 'Musical Instruments', 'Type: MIDI, Color: Silver', 15, 0, 5, 'photo1.jpg'),
+    ('Modern Desk Lamp', 50, 'Home & Living', 'Power Source: Electric', 1, 0, 20, 'photo2.jpg'),
+    ('Rolex', 10000, 'Fashion', 'Material: Stainless Steel', 0, 0, 10, 'photo3.jpg');
 
 
 INSERT INTO `javaschool`.`order_has_product` (`orders_id`, `product_id`, `quantity`)
@@ -171,6 +171,9 @@ SELECT * FROM javaschool.orders;
 SELECT * FROM javaschool.product;
 SELECT * FROM javaschool.order_has_product;
 SELECT * FROM javaschool.refresh_token;
+
+ALTER TABLE product
+DROP COLUMN image;
 
 -- SELECT p.*, SUM(ohp.quantity) as total 
 -- FROM Product p 
@@ -199,6 +202,22 @@ SELECT * FROM javaschool.refresh_token;
 -- JOIN javaschool.order_has_product ohp ON o.id = ohp.orders_id
 -- JOIN javaschool.product p ON ohp.product_id = p.id
 -- WHERE YEARWEEK(o.order_date) = YEARWEEK(CURRENT_DATE());
+
+
+-- USE javaschool;
+-- SELECT ohp.product_id
+-- FROM order_has_product ohp
+-- JOIN orders o ON ohp.orders_id = o.id
+-- WHERE o.client_id = 39;
+
+-- ALTER TABLE `javaschool`.`product`
+-- ADD COLUMN `image` TEXT NULL;
+
+-- ALTER TABLE product
+-- DROP COLUMN image;
+
+-- ALTER TABLE product MODIFY COLUMN image LONGBLOB;
+
 
 
 

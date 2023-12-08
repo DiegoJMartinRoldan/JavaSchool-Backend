@@ -1,17 +1,23 @@
 package es.javaschool.springbootosisfinal_task.controllers;
+import ch.qos.logback.core.model.Model;
 import es.javaschool.springbootosisfinal_task.domain.Product;
 import es.javaschool.springbootosisfinal_task.dto.ProductDTO;
 import es.javaschool.springbootosisfinal_task.exception.ResourceNotFoundException;
 import es.javaschool.springbootosisfinal_task.services.productServices.ProductService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Path;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 
@@ -35,14 +41,16 @@ public class ProductController {
 
     @PostMapping("/create")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<String> createProduct(@Valid @RequestBody ProductDTO productDTO) {
+    public ResponseEntity<String> createProduct(@RequestBody ProductDTO productDTO) {
         try {
             productService.createProduct(productDTO);
+
             return new ResponseEntity<>("Product created successfully", HttpStatus.CREATED);
         } catch (Exception e) {
             throw new ResourceNotFoundException("create");
         }
     }
+
 
     @GetMapping("/getby/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
@@ -104,6 +112,17 @@ public class ProductController {
 
     }
 
+
+
+ //  @PostMapping("/uploadImage")
+ //  public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
+ //      try {
+ //          String imagePath = productService.saveImageToFileSystem(file);
+ //          return new ResponseEntity<>("Imagen cargada exitosamente en: " + imagePath, HttpStatus.OK);
+ //      } catch (Exception e) {
+ //          return new ResponseEntity<>("Error al cargar la imagen: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+ //      }
+ //  }
 
 
 

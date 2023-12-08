@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.Base64;
 import java.util.List;
 
 @Getter
@@ -24,32 +25,30 @@ public class Product {
     @Column(name = "title")
     private String title;
 
-
     @Column(name = "price")
     private BigDecimal price;
-
 
     @Column(name = "category")
     private String category;
 
-
     @Column(name = "parameters")
     private String parameters;
-
 
     @Column(name = "weight")
     private BigDecimal weight;
 
-
     @Column(name = "volume")
     private BigDecimal volume;
 
+    @Column(name = "image", columnDefinition = "BLOB")
+    @Lob
+    private byte[] image;
 
     @Column(name = "quantity_stock")
     private Integer quantityStock;
 
-   @OneToMany (mappedBy = "product")
-   private List<OrderHasProduct> orderHasProducts;
+    @OneToMany(mappedBy = "product")
+    private List<OrderHasProduct> orderHasProducts;
 
 
 }

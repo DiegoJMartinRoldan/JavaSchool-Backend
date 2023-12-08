@@ -1,5 +1,6 @@
 package es.javaschool.springbootosisfinal_task.dto;
 
+import jakarta.persistence.Lob;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
@@ -14,6 +15,7 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class ProductDTO {
 
 
@@ -43,6 +45,9 @@ public class ProductDTO {
     @NotNull(message = "Stock quantity is required")
     @Min(value = 0, message = "Stock quantity must be a positive value")
     private Integer quantityStock;
+
+    @NotNull
+    private byte[] image;
 
 
 }
