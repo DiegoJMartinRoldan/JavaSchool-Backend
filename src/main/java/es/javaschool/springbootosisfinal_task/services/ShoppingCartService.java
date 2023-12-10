@@ -34,26 +34,10 @@ public class ShoppingCartService {
 
     private static final Logger log = LoggerFactory.getLogger(ShoppingCartService.class);
 
-    @Autowired
-    private ClientService clientService;
-
-    @Autowired
-    private OrdersService ordersService;
 
     @Autowired
     private ProductService productService;
 
-    @Autowired
-    private OrderHasProductRepository orderHasProductRepository;
-
-    @Autowired
-    private ClientAddressService clientAddressService;
-
-    @Autowired
-    private ProductMapper productMapper;
-
-    @Autowired
-    private OrdersRepository ordersRepository;
 
     @Autowired
     private HttpServletRequest request;
@@ -62,48 +46,8 @@ public class ShoppingCartService {
 
     // Add to cart for authenticated and no authenticated users
     public void addToCart(CartProductDTO cartProductDTO, HttpServletResponse response) {
-        Long clientId = cartProductDTO.getClientId();
-        Long clientAddressId = cartProductDTO.getClientAddressId();
-
-        if (clientId != null && clientAddressId != null) {
-            // Authenticated
-            log.info("Authenticated user. ClientId: {} ", clientId);
-            log.info("Authenticated user. ClientAddressId: {} ", clientAddressId);
-            handleAuthenticatedUser(clientId, clientAddressId, cartProductDTO);
-        } else {
-            // Not Authenticated
-            log.info("Unauthenticated user.");
             handleUnAuthenticatedUser(cartProductDTO, response);
-        }
-    }
 
-
-
-    // Authenticated
-    private void handleAuthenticatedUser(Long clientId, Long clientAddressId, CartProductDTO cartProductDTO) {
-        // Search current orders
-        Client client = clientService.getClientById(clientId);
-        Optional<Orders> pendingOrder = ordersRepository.findByClientAndOrderStatus(client, "PENDING");
-
-        if (pendingOrder.isPresent()) {
-            // Use current order
-            connectProductToOrders(pendingOrder.get(), cartProductDTO.getProducts(), cartProductDTO.getQuantities());
-        } else {
-            // Create new order
-            OrdersDTO ordersDTO = new OrdersDTO();
-            ordersDTO.setClient(client);
-            ordersDTO.setClientsAddress(clientAddressService.getClientAddressById(clientAddressId));
-            ordersDTO.setOrderStatus("PENDING");
-            ordersDTO.setPaymentStatus("PENDING");
-
-
-            Date currentDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
-            ordersDTO.setOrderDate(currentDate);
-
-            Orders newOrder = ordersService.createOrder(ordersDTO);
-
-            connectProductToOrders(newOrder, cartProductDTO.getProducts(), cartProductDTO.getQuantities());
-        }
     }
 
 
@@ -116,30 +60,13 @@ public class ShoppingCartService {
 
 
 
-
-    // Product - Order (create orderHasProduct)
-     private void connectProductToOrders(Orders orders, List<ProductDTO> productDTOList, List<Integer> quantities) {
-         for (int i = 0; i < productDTOList.size(); i++) {
-             ProductDTO productDTO = productDTOList.get(i);
-             Integer quantity = quantities.get(i);
-
-             OrderHasProduct orderHasProduct = new OrderHasProduct();
-             orderHasProduct.setOrders(orders);
-             orderHasProduct.setProduct(productService.getProductById(productDTO.getId()));
-             orderHasProduct.setQuantity(quantity);
-             orderHasProductRepository.save(orderHasProduct);
-             log.info("Product connected to Order. ProductId: {}, OrderId: {}", productDTO.getId(), orders.getId());
-         }
-     }
-
-
-
     // Cookies
     private void connectProductToCookie(CartProductDTO cartProductDTO, HttpServletResponse httpServletResponse, HttpServletRequest httpServletRequest) {
         Map<Long, Integer> productQuantityMap = new HashMap<>();
 
         // Existing cookie
         Cookie[] cookies = httpServletRequest.getCookies();
+
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("cart")) {
@@ -183,20 +110,113 @@ public class ShoppingCartService {
         log.info("Cookie added. CookieName: {}, CookieValue: {}", cartCookie.getName(), cartCookie.getValue());
     }
 
+    public void deleteProductFromCart(ProductQuantityDto productQuantityDto, HttpServletRequest request, HttpServletResponse response) {
+        try {
+            if (productQuantityDto != null && productQuantityDto.getProductDTO() != null) {
+                Map<Long, Integer> cartProductMap = getCartProductMap(request);
 
+                ProductDTO productDTO = productQuantityDto.getProductDTO();
+                Long productId = productDTO.getId();
 
+                if (cartProductMap.containsKey(productId)) {
+                    cartProductMap.remove(productId);
 
-    // Get Products + Quantities
-    public List<ProductQuantityDto> getProductsWithQuantities(Long clientId) {
-        List<OrderHasProduct> orderHasProducts = orderHasProductRepository.findOrderHasProductsByClientId(clientId);
+                    // Actualizar la cookie con el nuevo mapa de productos
+                    updateCartCookie(cartProductMap, response);
 
-        return orderHasProducts.stream()
-                .map(orderHasProduct -> {
-                    ProductDTO productDTO = productMapper.convertEntityToDto(orderHasProduct.getProduct());
-                    int quantity = orderHasProduct.getQuantity();
-                    return new ProductQuantityDto(productDTO, quantity);
-                })
-                .collect(Collectors.toList());
+                    // Log de éxito
+                    log.info("Product removed from cart successfully. ProductId: {}", productId);
+                } else {
+                    // Log si el producto no está en el carrito
+                    log.warn("Product with ID {} not found in the cart. No action taken.", productId);
+                }
+            } else {
+                // Log si ProductQuantityDto o ProductDTO son null
+                log.warn("ProductQuantityDto or ProductDTO is null. No action taken.");
+            }
+        } catch (Exception e) {
+            // Log de error
+            log.error("Error removing product from cart", e);
+            throw new RuntimeException("Error removing product from cart", e);
+        }
     }
 
+
+
+
+    // Otros métodos del servicio
+
+    private Map<Long, Integer> getCartProductMap(HttpServletRequest request) {
+        Map<Long, Integer> cartProductMap = new HashMap<>();
+
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("cart")) {
+                    try {
+                        byte[] decodedBytes = Base64.getDecoder().decode(cookie.getValue());
+                        String decodedValue = new String(decodedBytes);
+
+                        Map<String, Object> tempMap = new ObjectMapper().readValue(decodedValue, Map.class);
+
+                        tempMap.forEach((key, value) -> cartProductMap.put(Long.parseLong(key), Integer.parseInt(value.toString())));
+                    } catch (JsonProcessingException | NumberFormatException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                }
+            }
+        }
+
+        return cartProductMap;
+    }
+
+    private void updateCartCookie(Map<Long, Integer> cartProductMap, HttpServletResponse response) {
+        Cookie cartCookie = new Cookie("cart", "");
+        cartCookie.setMaxAge(24 * 60 * 60);
+
+        try {
+            String base64Value = Base64.getEncoder().encodeToString(new ObjectMapper().writeValueAsBytes(cartProductMap));
+            cartCookie.setValue(base64Value);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        response.addCookie(cartCookie);
+    }
+
+
+
+
+
+
+
+
+
+
+
+    //  public void removeFromCart(CartProductDTO cartProductDTO, HttpServletResponse response) {
+//
+  //      Long clientId = cartProductDTO.getClientId();
+  //      Long clientAddressId = cartProductDTO.getClientAddressId();
+  //      List<ProductDTO> products = cartProductDTO.getProducts();
+//
+  //      if (clientId != null && clientAddressId != null) {
+  //          // Usuario autenticado
+  //          // Lógica para eliminar productos del carrito para usuarios autenticados
+  //          // Esto podría implicar eliminar registros de la base de datos, actualizar una lista en memoria, etc.
+  //          for (ProductDTO product : products) {
+  //              productService.removeProductFromCart(clientId, clientAddressId, product.getId());
+  //          }
+  //      } else {
+  //          // Usuario no autenticado
+  //          // Lógica para eliminar productos del carrito para usuarios no autenticados
+  //          // Esto podría implicar actualizar la cookie, eliminar registros de la base de datos, etc.
+  //          connectProductToCookie(cartProductDTO, response, null);
+  //          // Actualizar la cookie después de la eliminación
+  //          updateCartCookie(response);
+  //      }
+//
+  //  }
 }

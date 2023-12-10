@@ -1,17 +1,12 @@
 package es.javaschool.springbootosisfinal_task.controllers;
-import aj.org.objectweb.asm.TypeReference;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import es.javaschool.springbootosisfinal_task.config.security.ChangePasswordRequest;
-import es.javaschool.springbootosisfinal_task.config.security.ClientToUserDetails;
 import es.javaschool.springbootosisfinal_task.domain.*;
 import es.javaschool.springbootosisfinal_task.config.jwt.RefreshToken;
-import es.javaschool.springbootosisfinal_task.dto.CartProductDTO;
-import es.javaschool.springbootosisfinal_task.dto.ClientDTO;
+import es.javaschool.springbootosisfinal_task.dto.*;
 import es.javaschool.springbootosisfinal_task.config.jwt.RefreshRequest;
 import es.javaschool.springbootosisfinal_task.config.jwt.RefreshTokenDTO;
-import es.javaschool.springbootosisfinal_task.dto.ProductDTO;
-import es.javaschool.springbootosisfinal_task.dto.ProductQuantityDto;
 import es.javaschool.springbootosisfinal_task.exception.ResourceNotFoundException;
 import es.javaschool.springbootosisfinal_task.config.jwt.RefreshTokenService;
 import es.javaschool.springbootosisfinal_task.repositories.ClientRepository;
@@ -33,19 +28,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -232,14 +220,8 @@ public class ClientController {
     public ResponseEntity<String> addToCart(@RequestBody CartProductDTO cartProductDTO, HttpServletResponse response) {
         shoppingCartService.addToCart(cartProductDTO, response);
 
-        Long clientId = cartProductDTO.getClientId();
-        Long clientAddressId = cartProductDTO.getClientAddressId();
+            return new ResponseEntity<>("Product added to cart successfully", HttpStatus.OK);
 
-        if (clientId != null && clientAddressId != null) {
-            return new ResponseEntity<>("Product added to cart successfully, authenticated", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("Product added to cart successfully, not authenticated", HttpStatus.OK);
-        }
     }
 
 
@@ -287,20 +269,46 @@ public class ClientController {
             }
         }
 
-        // Auth Products
-        if (authentication != null && authentication.isAuthenticated()) {
-            String clientEmail = ((ClientToUserDetails) authentication.getPrincipal()).getUsername();
-            Long clientId = clientService.getClientIdByEmail(clientEmail);
-
-            List<ProductQuantityDto> productQuantities = shoppingCartService.getProductsWithQuantities(clientId);
-
-
-            productList.addAll(productQuantities);
-        }
-
 
         return new ResponseEntity<>(productList, HttpStatus.OK);
     }
+
+
+    @DeleteMapping("/cartDelete")
+    public ResponseEntity<String> deleteProductFromCart(@RequestBody ProductQuantityDto productQuantityDto, HttpServletRequest request, HttpServletResponse response) {
+        try {
+            log.info("Received DELETE request to /client/cartDelete");
+            shoppingCartService.deleteProductFromCart(productQuantityDto, request, response);
+            log.info("Product removed from cart successfully");
+            return new ResponseEntity<>("Product removed from cart successfully", HttpStatus.OK);
+
+        } catch (Exception e) {
+            log.error("Error removing product from cart", e);
+            return new ResponseEntity<>("Error removing product from cart", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+
+
+
+
+
+
+    //   @DeleteMapping("/removeFromCart")
+ //   @PreAuthorize("permitAll() or isAuthenticated()")
+ //   public ResponseEntity<String> removeFromCart(@RequestBody CartProductDTO cartProductDTO, HttpServletResponse response) {
+ //       try {
+ //           shoppingCartService.removeFromCart(cartProductDTO, response);
+ //           return new ResponseEntity<>("Product removed from cart successfully", HttpStatus.OK);
+ //       } catch (Exception e) {
+ //           e.printStackTrace();
+ //           return new ResponseEntity<>("Error removing product from cart", HttpStatus.INTERNAL_SERVER_ERROR);
+ //       }
+ //   }
+
+
+
 
 
 

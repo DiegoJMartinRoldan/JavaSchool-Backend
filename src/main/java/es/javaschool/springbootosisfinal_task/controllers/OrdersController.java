@@ -87,7 +87,7 @@ public class OrdersController {
 
     @PostMapping("/create")
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<String> createOrder(@Valid @RequestBody OrdersDTO ordersDTO) {
+    public ResponseEntity<Orders> createOrder(@Valid @RequestBody OrdersDTO ordersDTO) {
 
         Long clientId = ordersDTO.getClient().getId();
         Long addressId = ordersDTO.getClientsAddress().getId();
@@ -99,8 +99,8 @@ public class OrdersController {
 
             ordersDTO.setClient(client);
             ordersDTO.setClientsAddress(clientsAddress);
-            ordersService.createOrder(ordersDTO);
-            return new ResponseEntity<>("Order created successfully", HttpStatus.CREATED);
+            Orders createdOrder = ordersService.createOrder(ordersDTO);
+            return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
 
         } else {
             throw new ResourceNotFoundException("create");

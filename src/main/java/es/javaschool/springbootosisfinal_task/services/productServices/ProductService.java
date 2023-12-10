@@ -148,6 +148,10 @@ private ProductMapper productMapper;
         return result;
     }
 
+
+
+
+
     public ProductDTO getProductDTOById(Long id) {
         Product product = productRepository
                 .findById(id).orElseThrow(() -> new EntityNotFoundException("Product not found with id: " + id));

@@ -87,7 +87,8 @@ public class SpringSecurity{
                                          "/client/login",
                                          "/client/refreshToken",
                                          "/client/cart",
-                                         "/client/addToCart").permitAll()
+                                         "/client/addToCart",
+                                         "/client/cartDelete").permitAll()
                             .requestMatchers("/client/**",
                                              "/clientsAddress/**",
                                              "/orders/**",
