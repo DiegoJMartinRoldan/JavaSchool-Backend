@@ -1,6 +1,7 @@
 package es.javaschool.springbootosisfinal_task.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,6 +13,7 @@ import lombok.*;
 @ToString
 @Entity
 @Table(name = "order_has_product")
+@JsonIgnoreProperties({"orders"})
 public class OrderHasProduct {
 
     @Id

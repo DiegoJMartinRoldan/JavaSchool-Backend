@@ -1,8 +1,6 @@
 package es.javaschool.springbootosisfinal_task.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,6 +13,7 @@ import java.util.List;
 @ToString
 @Entity
 @Table(name = "clients_address")
+@JsonIgnoreProperties({"orders"})
 public class ClientsAddress {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,10 +38,10 @@ public class ClientsAddress {
     private String apartment;
 
     @OneToMany(mappedBy = "clientsAddress", cascade = CascadeType.ALL)
-    @JsonBackReference
     private List<Orders> orders;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "client_id")
     private Client client;
 

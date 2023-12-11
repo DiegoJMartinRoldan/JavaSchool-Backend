@@ -2,6 +2,7 @@ package es.javaschool.springbootosisfinal_task.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "orders")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIgnoreProperties({"client", "clientsAddress"})
 public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,13 +43,13 @@ public class Orders {
 
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "client_id")
     private Client client;
 
 
     @ManyToOne
     @JoinColumn(name = "clients_address_id")
-    @JsonBackReference
     private ClientsAddress clientsAddress;
 
 

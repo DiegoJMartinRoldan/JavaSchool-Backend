@@ -1,5 +1,6 @@
 package es.javaschool.springbootosisfinal_task.repositories;
 import es.javaschool.springbootosisfinal_task.domain.Client;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -24,9 +25,11 @@ public interface ClientRepository extends JpaRepository<Client,Long> {
             "FROM Client c " +
             "JOIN c.orders o " +
             "JOIN OrderHasProduct ohp ON o.id = ohp.orders.id " +
-            "GROUP BY c " +
+            "GROUP BY c.id " +  // Agrupar por el ID del cliente en lugar de la entidad completa
             "ORDER BY SUM(ohp.quantity) DESC")
-    List<Object[]> findTopClients();
+    List<Object[]> findTopClients(Pageable pageable);
+
+
 
     @Query("SELECT c.id FROM Client c WHERE c.email = :email")
     Long findClientIdByEmail(@Param("email") String email);

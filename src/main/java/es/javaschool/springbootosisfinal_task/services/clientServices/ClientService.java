@@ -109,7 +109,8 @@ public class ClientService{
     //Statistics
 
     public List<Client> getTopClients() {
-        List<Object[]> topClients = clientRepository.findTopClients();
+        Pageable top10Clients = PageRequest.of(0, 10);
+        List<Object[]> topClients = clientRepository.findTopClients(top10Clients);
 
         List<Client> result = new ArrayList<>();
         for (Object[] objects : topClients){

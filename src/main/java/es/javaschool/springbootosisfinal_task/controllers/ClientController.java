@@ -41,7 +41,7 @@ import java.util.logging.Logger;
 @RestController
 @RequestMapping("${client.Controller.url}")
 public class ClientController {
-    private static final Logger logger = Logger.getLogger(ClientController.class.getName());
+
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(ShoppingCartService.class);
     @Autowired
     private ClientService clientService;
@@ -290,22 +290,6 @@ public class ClientController {
 
 
 
-
-
-
-
-
-    //   @DeleteMapping("/removeFromCart")
- //   @PreAuthorize("permitAll() or isAuthenticated()")
- //   public ResponseEntity<String> removeFromCart(@RequestBody CartProductDTO cartProductDTO, HttpServletResponse response) {
- //       try {
- //           shoppingCartService.removeFromCart(cartProductDTO, response);
- //           return new ResponseEntity<>("Product removed from cart successfully", HttpStatus.OK);
- //       } catch (Exception e) {
- //           e.printStackTrace();
- //           return new ResponseEntity<>("Error removing product from cart", HttpStatus.INTERNAL_SERVER_ERROR);
- //       }
- //   }
 
 
 

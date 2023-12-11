@@ -114,15 +114,6 @@ public class ProductController {
 
 
 
- //  @PostMapping("/uploadImage")
- //  public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
- //      try {
- //          String imagePath = productService.saveImageToFileSystem(file);
- //          return new ResponseEntity<>("Imagen cargada exitosamente en: " + imagePath, HttpStatus.OK);
- //      } catch (Exception e) {
- //          return new ResponseEntity<>("Error al cargar la imagen: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
- //      }
- //  }
 
 
 

@@ -43,21 +43,17 @@ public class ShoppingCartService {
     private HttpServletRequest request;
 
 
-
     // Add to cart for authenticated and no authenticated users
     public void addToCart(CartProductDTO cartProductDTO, HttpServletResponse response) {
-            handleUnAuthenticatedUser(cartProductDTO, response);
+        handleUnAuthenticatedUser(cartProductDTO, response);
 
     }
-
-
 
 
     //Not authenticated
     private void handleUnAuthenticatedUser(CartProductDTO cartProductDTO, HttpServletResponse httpServletResponse) {
         connectProductToCookie(cartProductDTO, httpServletResponse, request);
     }
-
 
 
     // Cookies
@@ -142,8 +138,6 @@ public class ShoppingCartService {
     }
 
 
-
-
     // Otros métodos del servicio
 
     private Map<Long, Integer> getCartProductMap(HttpServletRequest request) {
@@ -187,36 +181,4 @@ public class ShoppingCartService {
     }
 
 
-
-
-
-
-
-
-
-
-
-    //  public void removeFromCart(CartProductDTO cartProductDTO, HttpServletResponse response) {
-//
-  //      Long clientId = cartProductDTO.getClientId();
-  //      Long clientAddressId = cartProductDTO.getClientAddressId();
-  //      List<ProductDTO> products = cartProductDTO.getProducts();
-//
-  //      if (clientId != null && clientAddressId != null) {
-  //          // Usuario autenticado
-  //          // Lógica para eliminar productos del carrito para usuarios autenticados
-  //          // Esto podría implicar eliminar registros de la base de datos, actualizar una lista en memoria, etc.
-  //          for (ProductDTO product : products) {
-  //              productService.removeProductFromCart(clientId, clientAddressId, product.getId());
-  //          }
-  //      } else {
-  //          // Usuario no autenticado
-  //          // Lógica para eliminar productos del carrito para usuarios no autenticados
-  //          // Esto podría implicar actualizar la cookie, eliminar registros de la base de datos, etc.
-  //          connectProductToCookie(cartProductDTO, response, null);
-  //          // Actualizar la cookie después de la eliminación
-  //          updateCartCookie(response);
-  //      }
-//
-  //  }
 }
