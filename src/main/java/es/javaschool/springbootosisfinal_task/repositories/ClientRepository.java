@@ -19,7 +19,8 @@ public interface ClientRepository extends JpaRepository<Client,Long> {
     Optional<Client> findByEmailIgnoreCase(String email);
 
 
-    //Query para obtener el top de clientes que más pedidos hacen
+    //Query para obtener el top de clientes que más pedidos hacen, tener en cuenta
+
 
     @Query("SELECT c, SUM(ohp.quantity) as totalQuantity " +
             "FROM Client c " +
